@@ -48,7 +48,7 @@ logic [15:0] program_memory [0:7] = {
     16'h0000,
     16'h0000
 };
-assign instruction <= program_memory[program_counter];
+assign instruction = program_memory[program_counter];
 //------------------------------------------------------------------------------
 // Decoder ---------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -64,11 +64,11 @@ logic       Rd_write       ;
 logic [7:0] Rd_data        ;
 logic [7:0] Rs_data        ;
 
-assign Rd <= instruction[ 6:3];
-assign Rs <= instruction[10:7];
+assign Rd = instruction[ 6:3];
+assign Rs = instruction[10:7];
 
-Rs_data <= (Rs == 4'b0) ? 8'b0 : register[Rs];
-Rd_data <= (Rd == 4'b0) ? 8'b0 : register[Rd];
+assign Rs_data = (Rs == 4'b0) ? 8'b0 : registers[Rs];
+assign Rd_data = (Rd == 4'b0) ? 8'b0 : registers[Rd];
 
 always_ff @ (posedge Clock, negedge nReset)
     if (~nReset)
@@ -85,10 +85,10 @@ logic [16:0] B        ;
 logic [32:0] Out      ;
 logic [ 7:0] immediate;
 
-assign immediate <= instruction[14:7]                    ;
-assign Func      <= instruction[2:0]                     ;
-assign A         <= Rd_data                              ;
-assign B         <= (Func == OP_LI) ? immediate : Rs_data;
+assign immediate = instruction[14:7]                    ;
+assign Func      = instruction[2:0]                     ;
+assign A         = Rd_data                              ;
+assign B         = (Func == OP_LI) ? immediate : Rs_data;
 
 always_comb begin
     case (Func)
