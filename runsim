@@ -1,0 +1,4 @@
+#! /bin/bash
+
+#ncverilog -sv -q +ncaccess+r +gui picoMips_tb.sv picoMips.sv +tcl+restore.tcl &
+ncverilog -sv -q picoMips_tb.sv picoMips.sv
