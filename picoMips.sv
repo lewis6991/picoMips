@@ -4,9 +4,9 @@
 // Description: Implementation of a picoMips for ELEC6233 Assignment.
 //------------------------------------------------------------------------------
 module picomips(
-    input              Clock,
-    input        [9:0] SW   ,
-    output logic [7:0] LED
+    input        Clock,
+    input  [9:0] SW   ,
+    output [7:0] LED
 );
 
 parameter OP_ADD  = 3'b000;
@@ -15,16 +15,13 @@ parameter OP_MULI = 3'b100;
 parameter OP_ADDI = 3'b101;
 parameter OP_HEI  = 3'b110;
 
-logic        [14:0] instruction;
-logic        [ 2:0] Func       ;
+wire         [14:0] instruction;
+wire         [ 2:0] Func       ;
 logic signed [16:0] Out        ;
 logic               Rd_write   ;
 logic               pc_hold    ;
 
-//ALU Flags
-logic Z_flag; // Output is zero.
-
-logic nReset;
+wire nReset;
 assign nReset = SW[9];
 
 //------------------------------------------------------------------------------
@@ -40,7 +37,7 @@ always_ff @ (posedge Clock, negedge nReset)
 //------------------------------------------------------------------------------
 // Program Memory --------------------------------------------------------------
 //------------------------------------------------------------------------------
-logic [14:0] program_memory [0:21] = {
+const logic [14:0] [9:21] program_memory [0:21] = {
     {OP_HEI , 4'd0,  8'd0       }, // Wait for SW8 to become 1
     {OP_MOV , 4'd3,  4'd1 , 4'd0}, // Load SW[7:0] into $x1/$4
     {OP_HEI , 4'd0, -8'd      1 }, // Wait for SW8 to become 0
@@ -76,7 +73,7 @@ always_comb begin
     pc_hold  = 0;
     Rd_write = 0;
     if (Func == OP_HEI)
-        pc_hold = Z_flag; // Hold if output is zero.
+        pc_hold = (Out == 0); // Hold if output is zero.
     else
         Rd_write = 1;
 end
@@ -84,9 +81,9 @@ end
 // Registers -------------------------------------------------------------------
 //------------------------------------------------------------------------------
 logic [7:0] registers[2:15];
-logic [3:0] Rs             ;
-logic [3:0] Rd             ;
-logic [7:0] Rd_write_data  ;
+wire  [3:0] Rs             ;
+wire  [3:0] Rd             ;
+wire  [7:0] Rd_write_data  ;
 logic [7:0] Rd_data        ;
 logic [7:0] Rs_data        ;
 
@@ -119,8 +116,8 @@ always_ff @ (posedge Clock, negedge nReset)
 //------------------------------------------------------------------------------
 // ALU -------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-logic signed [ 7:0] A, B     ;
-logic        [ 7:0] immediate;
+wire signed [7:0] A, B     ;
+wire        [7:0] immediate;
 
 assign immediate = instruction[7:0]  ;
 assign Func      = instruction[14:12];
