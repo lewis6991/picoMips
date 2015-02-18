@@ -17,7 +17,7 @@ parameter OP_HEI  = 3'b110;
 
 wire         [14:0] instruction;
 wire         [ 2:0] Func       ;
-logic signed [16:0] Out        ;
+logic signed [ 7:0] Out        ;
 logic               Rd_write   ;
 logic               pc_hold    ;
 
@@ -39,10 +39,10 @@ always_ff @ (posedge Clock, negedge nReset)
 //------------------------------------------------------------------------------
 const logic [14:0] [9:21] program_memory [0:21] = {
     {OP_HEI , 4'd0,  8'd0       }, // Wait for SW8 to become 1
-    {OP_MOV , 4'd3,  4'd1 , 4'd0}, // Load SW[7:0] into $x1/$4
+    {OP_MOV , 4'd3,  4'd0 , 4'd0}, // Load SW[7:0] into $x1/$4
     {OP_HEI , 4'd0, -8'd      1 }, // Wait for SW8 to become 0
     {OP_HEI , 4'd0,  8'd0       }, // Wait for SW8 to become 1
-    {OP_MOV , 4'd4,  4'd1 , 4'd0}, // Load SW[7:0] into $y1/$5
+    {OP_MOV , 4'd4,  4'd0 , 4'd0}, // Load SW[7:0] into $y1/$5
     {OP_HEI , 4'd0, -8'd1       }, // Wait for SW8 to become 0
     // Calc x2
     {OP_MOV , 4'd5,  4'd3 , 4'd0}, // Load $x1/$4 into $x2/$6
@@ -89,19 +89,17 @@ logic [7:0] Rs_data        ;
 
 assign Rd            = instruction[11:8];
 assign Rs            = instruction[ 7:4];
-assign Rd_write_data = (Func == OP_MULI) ? Out [14:7] : Out[8:0];
+assign Rd_write_data = Out              ;
 assign LED           = registers[2]     ;
 
 // Asynchronous Read
 always_comb begin
     case (Rd)
         0      : Rd_data = {7'b0, SW[8]};
-        1      : Rd_data = SW[7:0]      ;
         default: Rd_data = registers[Rd];
     endcase
     case (Rs)
-        0      : Rs_data = {7'b0, SW[8]};
-        1      : Rs_data = SW[7:0]      ;
+        0      : Rs_data = SW[7:0]      ;
         default: Rs_data = registers[Rs];
     endcase
 end
@@ -125,9 +123,11 @@ assign A         = Rd_data           ;
 assign B         = (Func inside {OP_ADDI, OP_MULI, OP_HEI}) ? immediate : Rs_data;
 assign Z_flag    = (Out == 16'b0)    ;
 
+logic signed [6:0] tmp;
+
 always_comb
     case (Func)
-        OP_MULI : Out = A * B;
+        OP_MULI : {Out, tmp} = A * B;
         OP_MOV  : Out = B    ;
         default : Out = A + B;
     endcase
