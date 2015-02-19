@@ -37,7 +37,7 @@ always_ff @ (posedge Clock, negedge nReset)
 //------------------------------------------------------------------------------
 // Program Memory --------------------------------------------------------------
 //------------------------------------------------------------------------------
-const logic [14:0] [9:21] program_memory [0:21] = {
+const logic [14:0] [0:21] program_memory = {
     {OP_HEI , 4'd0,  8'd0       }, // Wait for SW8 to become 1
     {OP_MOV , 4'd3,  4'd0 , 4'd0}, // Load SW[7:0] into $x1/$4
     {OP_HEI , 4'd0, -8'd      1 }, // Wait for SW8 to become 0
@@ -120,7 +120,7 @@ wire        [7:0] immediate;
 assign immediate = instruction[7:0]  ;
 assign Func      = instruction[14:12];
 assign A         = Rd_data           ;
-assign B         = (Func inside {OP_ADDI, OP_MULI, OP_HEI}) ? immediate : Rs_data;
+assign B         = (Func[2]) ? immediate : Rs_data;
 assign Z_flag    = (Out == 16'b0)    ;
 
 logic signed [6:0] tmp;
