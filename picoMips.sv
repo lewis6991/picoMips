@@ -15,7 +15,7 @@ parameter OP_MULI = 3'b100;
 parameter OP_ADDI = 3'b101;
 parameter OP_HEI  = 3'b110;
 
-wire         [14:0] instruction;
+logic        [14:0] instruction;
 wire         [ 2:0] Func       ;
 logic signed [ 7:0] Out        ;
 logic               Rd_write   ;
@@ -41,36 +41,35 @@ always_ff @ (posedge Clock)
 case (program_counter)
     0 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
     1 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
-    2 : instruction = {OP_MOV , 4'd3,  4'd0 , 4'd0}; // Load SW[7:0] into $x1/$4
-    3 : instruction = {OP_HEI , 4'd0, -8'd      1 }; // Wait for SW8 to become 0
-    4 : instruction = {OP_HEI , 4'd0, -8'd      1 }; // Wait for SW8 to become 0
+    2 : instruction = {OP_MOV , 4'd3,  4'd0 , 4'd0}; // Load SW[7:0] into $x1/$3
+    3 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
+    4 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
     5 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
-    0 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
-    0 : instruction = {OP_MOV , 4'd4,  4'd0 , 4'd0}; // Load SW[7:0] into $y1/$5
-    0 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
-    6 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
-    7 : instruction = {OP_MOV , 4'd5,  4'd3 , 4'd0}; // Load $x1/$4 into $x2/$6
-    8 : instruction = {OP_MULI, 4'd5,  8'd96      }; // Multiply x1 by 0.75
-    9 : instruction = {OP_MOV , 4'd7,  4'd4 , 4'd0}; // Load y1 into $t5/$12
-    10: instruction = {OP_MULI, 4'd7,  8'd64      }; // Multiply y1 by 0.5
-    11: instruction = {OP_ADD , 4'd5,  4'd7 , 4'd0}; // Add (0.5*y1) to (0.75*x1)
-    12: instruction = {OP_ADDI, 4'd5,  8'd20      }; // Add (20) to (0.5*y1 + 0.75*x1)
-    13: instruction = {OP_MOV , 4'd6,  4'd4 , 4'd0}; // Load $y1/$5 into $y2/$7
-    14: instruction = {OP_MULI, 4'd6,  8'd96      }; // Multiply y1 by 0.75
-    15: instruction = {OP_MOV , 4'd8,  4'd3 , 4'd0}; // Load x1 into $t5/$13
-    16: instruction = {OP_MULI, 4'd8, -8'd64      }; // Multiply x1 by -0.5
-    17: instruction = {OP_ADD , 4'd6,  4'd8 , 4'd0}; // Add (-0.5*x1) from (0.75*y1)
-    18: instruction = {OP_ADDI, 4'd6, -8'd20      }; // Add (-20) to (-0.5*x1 + 0.75*y1)
-    19: instruction = {OP_MOV , 4'd2,  4'd5 , 4'd0}; // Output x2 to LED's
-    20: instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
-    21: instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
-    22: instruction = {OP_MOV , 4'd2,  4'd6 , 4'd0}; // Output y2 to LED's
-    23: instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
-    24: instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
+    6 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
+    7 : instruction = {OP_MOV , 4'd4,  4'd0 , 4'd0}; // Load SW[7:0] into $y1/$4
+    8 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
+    9 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
+    10: instruction = {OP_MOV , 4'd5,  4'd3 , 4'd0}; // Load $x1/$3 into $x2/$5
+    11: instruction = {OP_MULI, 4'd5,  8'd96      }; // Multiply x1 by 0.75
+    12: instruction = {OP_MOV , 4'd7,  4'd4 , 4'd0}; // Load y1 into $t5/$7
+    13: instruction = {OP_MULI, 4'd7,  8'd64      }; // Multiply y1 by 0.5
+    14: instruction = {OP_ADD , 4'd5,  4'd7 , 4'd0}; // Add (0.5*y1) to (0.75*x1)
+    15: instruction = {OP_ADDI, 4'd5,  8'd20      }; // Add (20) to (0.5*y1 + 0.75*x1)
+    16: instruction = {OP_MOV , 4'd6,  4'd4 , 4'd0}; // Load $y1/$4 into $y2/$6
+    17: instruction = {OP_MULI, 4'd6,  8'd96      }; // Multiply y1 by 0.75
+    18: instruction = {OP_MOV , 4'd8,  4'd3 , 4'd0}; // Load x1 into $t5/$13
+    19: instruction = {OP_MULI, 4'd8, -8'd64      }; // Multiply x1 by -0.5
+    20: instruction = {OP_ADD , 4'd6,  4'd8 , 4'd0}; // Add (-0.5*x1) from (0.75*y1)
+    21: instruction = {OP_ADDI, 4'd6, -8'd20      }; // Add (-20) to (-0.5*x1 + 0.75*y1)
+    22: instruction = {OP_MOV , 4'd2,  4'd5 , 4'd0}; // Output x2 to LED's
+    23: instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
+    24: instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
+    25: instruction = {OP_MOV , 4'd2,  4'd6 , 4'd0}; // Output y2 to LED's
+    26: instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
+    27: instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
     default: instruction  = 0;
 endcase
 
-assign instruction = program_memory[program_counter];
 //------------------------------------------------------------------------------
 // Decoder ---------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -85,12 +84,12 @@ end
 //------------------------------------------------------------------------------
 // Registers -------------------------------------------------------------------
 //------------------------------------------------------------------------------
-logic [7:0] registers[2:15];
-wire  [3:0] Rs             ;
-wire  [3:0] Rd             ;
-wire  [7:0] Rd_write_data  ;
-logic [7:0] Rd_data        ;
-logic [7:0] Rs_data        ;
+logic [7:0] registers[2:8];
+wire  [3:0] Rs            ;
+wire  [3:0] Rd            ;
+wire  [7:0] Rd_write_data ;
+logic [7:0] Rd_data       ;
+logic [7:0] Rs_data       ;
 
 assign Rd            = instruction[11:8];
 assign Rs            = instruction[ 7:4];
@@ -112,7 +111,7 @@ end
 // Synchronous Write
 always_ff @ (posedge Clock, negedge nReset)
     if (~nReset)
-        for (int i = 2; i < 16; ++i)
+        for (int i = 2; i < 9; ++i)
             registers[i] <= #20 0;
     else if (Rd > 1 && Rd_write)
         registers[Rd] = Rd_write_data;

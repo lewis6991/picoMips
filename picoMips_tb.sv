@@ -25,11 +25,11 @@ task run_affine_trans(bit signed [7:0] x1, y1);
 
     #(5.5*clk_p) SW[ 9 ] = 1  ;
                  SW[7:0] = x1 ;// Set x1
-    #(  2*clk_p) SW[ 8 ] = 1  ;
-    #(  2*clk_p) SW[ 8 ] = 0  ;
-    #(  2*clk_p) SW[7:0] = y1 ;// Set y1
-    #(  2*clk_p) SW[ 8 ] = 1  ;
-    #(  2*clk_p) SW[ 8 ] = 0  ;// 4.
+    #(  5*clk_p) SW[ 8 ] = 1  ;
+    #(  5*clk_p) SW[ 8 ] = 0  ;
+    #(  5*clk_p) SW[7:0] = y1 ;// Set y1
+    #(  5*clk_p) SW[ 8 ] = 1  ;
+    #(  5*clk_p) SW[ 8 ] = 0  ;// 4.
     #( 20*clk_p) x2_act  = LED;
                  SW[ 8 ] = 1  ;
     #(  5*clk_p) y2_act  = LED;
