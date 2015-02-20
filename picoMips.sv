@@ -37,34 +37,39 @@ always_ff @ (posedge Clock, negedge nReset)
 //------------------------------------------------------------------------------
 // Program Memory --------------------------------------------------------------
 //------------------------------------------------------------------------------
-const logic [14:0] [0:21] program_memory = {
-    {OP_HEI , 4'd0,  8'd0       }, // Wait for SW8 to become 1
-    {OP_MOV , 4'd3,  4'd0 , 4'd0}, // Load SW[7:0] into $x1/$4
-    {OP_HEI , 4'd0, -8'd      1 }, // Wait for SW8 to become 0
-    {OP_HEI , 4'd0,  8'd0       }, // Wait for SW8 to become 1
-    {OP_MOV , 4'd4,  4'd0 , 4'd0}, // Load SW[7:0] into $y1/$5
-    {OP_HEI , 4'd0, -8'd1       }, // Wait for SW8 to become 0
-    // Calc x2
-    {OP_MOV , 4'd5,  4'd3 , 4'd0}, // Load $x1/$4 into $x2/$6
-    {OP_MULI, 4'd5,  8'd96      }, // Multiply x1 by 0.75
-    {OP_MOV , 4'd7,  4'd4 , 4'd0}, // Load y1 into $t5/$12
-    {OP_MULI, 4'd7,  8'd64      }, // Multiply y1 by 0.5
-    {OP_ADD , 4'd5,  4'd7 , 4'd0}, // Add (0.5*y1) to (0.75*x1)
-    {OP_ADDI, 4'd5,  8'd20      }, // Add (20) to (0.5*y1 + 0.75*x1)
-    // Calc y2
-    {OP_MOV , 4'd6,  4'd4 , 4'd0}, // Load $y1/$5 into $y2/$7
-    {OP_MULI, 4'd6,  8'd96      }, // Multiply y1 by 0.75
-    {OP_MOV , 4'd8,  4'd3 , 4'd0}, // Load x1 into $t5/$13
-    {OP_MULI, 4'd8, -8'd64      }, // Multiply x1 by -0.5
-    {OP_ADD , 4'd6,  4'd8 , 4'd0}, // Add (-0.5*x1) from (0.75*y1)
-    {OP_ADDI, 4'd6, -8'd20      }, // Add (-20) to (-0.5*x1 + 0.75*y1)
-    // Output x2
-    {OP_MOV , 4'd2,  4'd5 , 4'd0}, // Output x2 to LED's
-    {OP_HEI , 4'd0,  8'd0       }, // Wait for SW8 to become 1
-    // Output y2
-    {OP_MOV , 4'd2,  4'd6 , 4'd0}, // Output y2 to LED's
-    {OP_HEI , 4'd0, -8'd1       }  // Wait for SW8 to become 0
-};
+always_ff @ (posedge Clock)
+case (program_counter)
+    0 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
+    1 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
+    2 : instruction = {OP_MOV , 4'd3,  4'd0 , 4'd0}; // Load SW[7:0] into $x1/$4
+    3 : instruction = {OP_HEI , 4'd0, -8'd      1 }; // Wait for SW8 to become 0
+    4 : instruction = {OP_HEI , 4'd0, -8'd      1 }; // Wait for SW8 to become 0
+    5 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
+    0 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
+    0 : instruction = {OP_MOV , 4'd4,  4'd0 , 4'd0}; // Load SW[7:0] into $y1/$5
+    0 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
+    6 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
+    7 : instruction = {OP_MOV , 4'd5,  4'd3 , 4'd0}; // Load $x1/$4 into $x2/$6
+    8 : instruction = {OP_MULI, 4'd5,  8'd96      }; // Multiply x1 by 0.75
+    9 : instruction = {OP_MOV , 4'd7,  4'd4 , 4'd0}; // Load y1 into $t5/$12
+    10: instruction = {OP_MULI, 4'd7,  8'd64      }; // Multiply y1 by 0.5
+    11: instruction = {OP_ADD , 4'd5,  4'd7 , 4'd0}; // Add (0.5*y1) to (0.75*x1)
+    12: instruction = {OP_ADDI, 4'd5,  8'd20      }; // Add (20) to (0.5*y1 + 0.75*x1)
+    13: instruction = {OP_MOV , 4'd6,  4'd4 , 4'd0}; // Load $y1/$5 into $y2/$7
+    14: instruction = {OP_MULI, 4'd6,  8'd96      }; // Multiply y1 by 0.75
+    15: instruction = {OP_MOV , 4'd8,  4'd3 , 4'd0}; // Load x1 into $t5/$13
+    16: instruction = {OP_MULI, 4'd8, -8'd64      }; // Multiply x1 by -0.5
+    17: instruction = {OP_ADD , 4'd6,  4'd8 , 4'd0}; // Add (-0.5*x1) from (0.75*y1)
+    18: instruction = {OP_ADDI, 4'd6, -8'd20      }; // Add (-20) to (-0.5*x1 + 0.75*y1)
+    19: instruction = {OP_MOV , 4'd2,  4'd5 , 4'd0}; // Output x2 to LED's
+    20: instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
+    21: instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
+    22: instruction = {OP_MOV , 4'd2,  4'd6 , 4'd0}; // Output y2 to LED's
+    23: instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
+    24: instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
+    default: instruction  = 0;
+endcase
+
 assign instruction = program_memory[program_counter];
 //------------------------------------------------------------------------------
 // Decoder ---------------------------------------------------------------------
