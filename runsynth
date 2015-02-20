@@ -1,5 +1,6 @@
  #! /bin/bash
 
- quartus_map picomips --source=picoMips.sv --family="Cyclone IV E"
+ #quartus_map picomips --source=picoMips.sv --family="Cyclone IV E"
+ quartus_map picomips
 
  more picomips.map.summary

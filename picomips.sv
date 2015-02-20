@@ -15,7 +15,7 @@ parameter OP_MULI = 3'b100;
 parameter OP_ADDI = 3'b101;
 parameter OP_HEI  = 3'b110;
 
-logic        [14:0] instruction;
+reg          [14:0] instruction;
 wire         [ 2:0] Func       ;
 logic signed [ 7:0] Out        ;
 logic               Rd_write   ;
@@ -67,7 +67,7 @@ case (program_counter)
     25: instruction = {OP_MOV , 4'd2,  4'd6 , 4'd0}; // Output y2 to LED's
     26: instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
     27: instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
-    default: instruction  = 0;
+	 default: instruction = 0;
 endcase
 
 //------------------------------------------------------------------------------
@@ -125,7 +125,6 @@ assign immediate = instruction[7:0]  ;
 assign Func      = instruction[14:12];
 assign A         = Rd_data           ;
 assign B         = (Func[2]) ? immediate : Rs_data;
-assign Z_flag    = (Out == 16'b0)    ;
 
 logic signed [6:0] tmp;
 
