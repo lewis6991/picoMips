@@ -50,37 +50,31 @@ always_ff @ (posedge Clock, negedge nReset)
 always_ff @ (posedge Clock)
 case (program_counter[7:2])
     0 : instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
-    1 : instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
-    2 : instruction = {OP_LSW , REG_1}; // Load SW[7:0] (x1) to REG_1
-    3 : instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
-    4 : instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
-    5 : instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
-    6 : instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
-    7 : instruction = {OP_LSW , REG_2}; // Load SW[7:0] (y1) to REG_2
-    8 : instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
-    9 : instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
+    1 : instruction = {OP_LSW , REG_1}; // Load SW[7:0] (x1) to REG_1
+    2 : instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
+    3 : instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
+    4 : instruction = {OP_LSW , REG_2}; // Load SW[7:0] (y1) to REG_2
+    5 : instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
     // Calc x2
-    10: instruction = {OP_RTA , REG_1}; // Load x1 into ACC
-    11: instruction = {OP_MULI, 5'd3 }; // Multiply x1 by 0.75
-    12: instruction = {OP_ATR , REG_3}; // Move 0.75*x1 to $3
-    13: instruction = {OP_RTA , REG_2}; // Load y1 into ACC
-    14: instruction = {OP_MULI, 5'd2 }; // Multiply y1 by 0.5
-    15: instruction = {OP_ADD , REG_3}; // Add (0.75*x1) to (0.5*y1)
-    16: instruction = {OP_ADDI, 5'd10}; // Add (20) to (0.75*x1 + 0.5*y1)
-    17: instruction = {OP_ATR , LEDS }; // Move ACC (x2) to LED's
+    6 : instruction = {OP_RTA , REG_1}; // Load x1 into ACC
+    7 : instruction = {OP_MULI, 5'd3 }; // Multiply x1 by 0.75
+    8 : instruction = {OP_ATR , REG_3}; // Move 0.75*x1 to $3
+    9 : instruction = {OP_RTA , REG_2}; // Load y1 into ACC
+    10: instruction = {OP_MULI, 5'd2 }; // Multiply y1 by 0.5
+    11: instruction = {OP_ADD , REG_3}; // Add (0.75*x1) to (0.5*y1)
+    12: instruction = {OP_ADDI, 5'd10}; // Add (20) to (0.75*x1 + 0.5*y1)
+    13: instruction = {OP_ATR , LEDS }; // Move ACC (x2) to LED's
     // Calc y2
-    18: instruction = {OP_RTA , REG_1}; // Load x1 into ACC
-    19: instruction = {OP_MULI, 5'd30}; // Multiply x1 by -0.5
-    20: instruction = {OP_ATR , REG_3}; // Move -0.5*x1 to $3
-    21: instruction = {OP_RTA , REG_2}; // Load y1 into ACC
-    22: instruction = {OP_MULI, 5'd3 }; // Multiply y1 by 0.75
-    23: instruction = {OP_ADD , REG_3}; // Add (-0.5*x1) to (0.75*y1)
-    24: instruction = {OP_ADDI, 5'd22}; // Add (-20) to (-0.5*x1 + 0.75*y1)
-    25: instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
-    26: instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
-    27: instruction = {OP_ATR , LEDS }; // Move ACC (y2) to LED's
-    28: instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
-    29: instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
+    14: instruction = {OP_RTA , REG_1}; // Load x1 into ACC
+    15: instruction = {OP_MULI, 5'd30}; // Multiply x1 by -0.5
+    16: instruction = {OP_ATR , REG_3}; // Move -0.5*x1 to $3
+    17: instruction = {OP_RTA , REG_2}; // Load y1 into ACC
+    18: instruction = {OP_MULI, 5'd3 }; // Multiply y1 by 0.75
+    19: instruction = {OP_ADD , REG_3}; // Add (-0.5*x1) to (0.75*y1)
+    20: instruction = {OP_ADDI, 5'd22}; // Add (-20) to (-0.5*x1 + 0.75*y1)
+    21: instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
+    22: instruction = {OP_ATR , LEDS }; // Move ACC (y2) to LED's
+    23: instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
     default: instruction = 0;
 endcase
 
