@@ -17,18 +17,12 @@ simvision {
     waveform add -signals picomips_tb.picomips_inst0.A
     waveform add -signals picomips_tb.picomips_inst0.B
     waveform add -signals picomips_tb.picomips_inst0.Func
-    waveform add -signals picomips_tb.picomips_inst0.Out
-    waveform add -signals picomips_tb.picomips_inst0.Rd
-    waveform add -signals picomips_tb.picomips_inst0.Rd_data
-    waveform add -signals picomips_tb.picomips_inst0.Rd_write
-    waveform add -signals picomips_tb.picomips_inst0.Rd_write_data
-    waveform add -signals picomips_tb.picomips_inst0.Rs
-    waveform add -signals picomips_tb.picomips_inst0.Rs_data
+    waveform add -signals picomips_tb.picomips_inst0.acc
+    waveform add -signals picomips_tb.picomips_inst0.reg_addr
+    waveform add -signals picomips_tb.picomips_inst0.reg_data
+    waveform add -signals picomips_tb.picomips_inst0.reg_write
+    waveform add -signals picomips_tb.picomips_inst0.reg_write_data
     waveform add -signals picomips_tb.picomips_inst0.immediate
-    waveform add -signals picomips_tb.picomips_inst0.N_flag
-    waveform add -signals picomips_tb.picomips_inst0.Z_flag
     waveform add -signals picomips_tb.picomips_inst0.pc_hold
-    waveform add -signals picomips_tb.picomips_inst0.pc_jump
-    waveform add -signals picomips_tb.picomips_inst0.pc_jump_addr
     waveform add -signals picomips_tb.picomips_inst0.program_counter
 }

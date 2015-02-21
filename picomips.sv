@@ -9,17 +9,27 @@ module picomips(
     output [7:0] LED
 );
 
-parameter OP_ADD  = 3'b000;
-parameter OP_MOV  = 3'b010;
-parameter OP_MULI = 3'b100;
+parameter OP_LSW  = 3'b001;
+parameter OP_RTA  = 3'b010;
+parameter OP_ATR  = 3'b011;
+parameter OP_ADD  = 3'b100;
 parameter OP_ADDI = 3'b101;
-parameter OP_HEI  = 3'b110;
+parameter OP_MULI = 3'b110;
+parameter OP_HEI  = 3'b111;
 
-reg          [14:0] instruction;
-wire         [ 2:0] Func       ;
-logic signed [ 7:0] Out        ;
-logic               Rd_write   ;
-logic               pc_hold    ;
+// Reigsters
+parameter LEDS  = 5'd0;
+parameter REG_1 = 5'd1;
+parameter REG_2 = 5'd2;
+parameter REG_3 = 5'd3;
+
+reg          [7:0] instruction;
+wire         [2:0] Func       ;
+logic signed [7:0] acc        ;
+logic              pc_hold    ;
+
+logic acc_we;
+
 
 wire nReset;
 assign nReset = SW[9];
@@ -27,113 +37,109 @@ assign nReset = SW[9];
 //------------------------------------------------------------------------------
 // Program Counter -------------------------------------------------------------
 //------------------------------------------------------------------------------
-logic [4:0] program_counter;
+logic [7:0] program_counter;
 
 always_ff @ (posedge Clock, negedge nReset)
     if (~nReset)
-        program_counter <= 0;
+        program_counter <= #20 0;
     else if (~pc_hold)
         program_counter <= #20 program_counter + 1;
 //------------------------------------------------------------------------------
 // Program Memory --------------------------------------------------------------
 //------------------------------------------------------------------------------
 always_ff @ (posedge Clock)
-case (program_counter)
-    0 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
-    1 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
-    2 : instruction = {OP_MOV , 4'd3,  4'd0 , 4'd0}; // Load SW[7:0] into $x1/$3
-    3 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
-    4 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
-    5 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
-    6 : instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
-    7 : instruction = {OP_MOV , 4'd4,  4'd0 , 4'd0}; // Load SW[7:0] into $y1/$4
-    8 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
-    9 : instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
-    10: instruction = {OP_MOV , 4'd5,  4'd3 , 4'd0}; // Load $x1/$3 into $x2/$5
-    11: instruction = {OP_MULI, 4'd5,  8'd96      }; // Multiply x1 by 0.75
-    12: instruction = {OP_MOV , 4'd7,  4'd4 , 4'd0}; // Load y1 into $t5/$7
-    13: instruction = {OP_MULI, 4'd7,  8'd64      }; // Multiply y1 by 0.5
-    14: instruction = {OP_ADD , 4'd5,  4'd7 , 4'd0}; // Add (0.5*y1) to (0.75*x1)
-    15: instruction = {OP_ADDI, 4'd5,  8'd20      }; // Add (20) to (0.5*y1 + 0.75*x1)
-    16: instruction = {OP_MOV , 4'd6,  4'd4 , 4'd0}; // Load $y1/$4 into $y2/$6
-    17: instruction = {OP_MULI, 4'd6,  8'd96      }; // Multiply y1 by 0.75
-    18: instruction = {OP_MOV , 4'd8,  4'd3 , 4'd0}; // Load x1 into $t5/$13
-    19: instruction = {OP_MULI, 4'd8, -8'd64      }; // Multiply x1 by -0.5
-    20: instruction = {OP_ADD , 4'd6,  4'd8 , 4'd0}; // Add (-0.5*x1) from (0.75*y1)
-    21: instruction = {OP_ADDI, 4'd6, -8'd20      }; // Add (-20) to (-0.5*x1 + 0.75*y1)
-    22: instruction = {OP_MOV , 4'd2,  4'd5 , 4'd0}; // Output x2 to LED's
-    23: instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
-    24: instruction = {OP_HEI , 4'd0,  8'd0       }; // Wait for SW8 to become 1
-    25: instruction = {OP_MOV , 4'd2,  4'd6 , 4'd0}; // Output y2 to LED's
-    26: instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
-    27: instruction = {OP_HEI , 4'd0, -8'd1       }; // Wait for SW8 to become 0
-	 default: instruction = 0;
+case (program_counter[7:2])
+    0 : instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
+    1 : instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
+    2 : instruction = {OP_LSW , REG_1}; // Load SW[7:0] (x1) to REG_1
+    3 : instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
+    4 : instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
+    5 : instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
+    6 : instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
+    7 : instruction = {OP_LSW , REG_2}; // Load SW[7:0] (y1) to REG_2
+    8 : instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
+    9 : instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
+    // Calc x2
+    10: instruction = {OP_RTA , REG_1}; // Load x1 into ACC
+    11: instruction = {OP_MULI, 5'd3 }; // Multiply x1 by 0.75
+    12: instruction = {OP_ATR , REG_3}; // Move 0.75*x1 to $3
+    13: instruction = {OP_RTA , REG_2}; // Load y1 into ACC
+    14: instruction = {OP_MULI, 5'd2 }; // Multiply y1 by 0.5
+    15: instruction = {OP_ADD , REG_3}; // Add (0.75*x1) to (0.5*y1)
+    16: instruction = {OP_ADDI, 5'd10}; // Add (20) to (0.75*x1 + 0.5*y1)
+    17: instruction = {OP_ATR , LEDS }; // Move ACC (x2) to LED's
+    // Calc y2
+    18: instruction = {OP_RTA , REG_1}; // Load x1 into ACC
+    19: instruction = {OP_MULI, 5'd30}; // Multiply x1 by -0.5
+    20: instruction = {OP_ATR , REG_3}; // Move -0.5*x1 to $3
+    21: instruction = {OP_RTA , REG_2}; // Load y1 into ACC
+    22: instruction = {OP_MULI, 5'd3 }; // Multiply y1 by 0.75
+    23: instruction = {OP_ADD , REG_3}; // Add (-0.5*x1) to (0.75*y1)
+    24: instruction = {OP_ADDI, 5'd22}; // Add (-20) to (-0.5*x1 + 0.75*y1)
+    25: instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
+    26: instruction = {OP_HEI , 5'd0 }; // Wait for SW8 to become 1
+    27: instruction = {OP_ATR , LEDS }; // Move ACC (y2) to LED's
+    28: instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
+    29: instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
+    default: instruction = 0;
 endcase
 
 //------------------------------------------------------------------------------
 // Decoder ---------------------------------------------------------------------
 //------------------------------------------------------------------------------
-always_comb begin
-    pc_hold  = 0;
-    Rd_write = 0;
-    if (Func == OP_HEI)
-        pc_hold = (Out == 0); // Hold if output is zero.
-    else
-        Rd_write = 1;
-end
+wire hei_arg;
+
+assign hei_arg   = instruction[0];
+assign reg_write = (Func == OP_ATR || Func == OP_LSW);
+assign pc_hold   = (Func == OP_HEI) ? (SW[8] == hei_arg) : 1'b0;
+assign acc_we    = program_counter[0] && program_counter[1] && (Func == OP_RTA || Func == OP_MULI || Func == OP_ADDI || Func == OP_ADD);
 //------------------------------------------------------------------------------
 // Registers -------------------------------------------------------------------
 //------------------------------------------------------------------------------
-logic [7:0] registers[2:8];
-wire  [3:0] Rs            ;
-wire  [3:0] Rd            ;
-wire  [7:0] Rd_write_data ;
-logic [7:0] Rd_data       ;
-logic [7:0] Rs_data       ;
+logic [7:0] registers[0:3];
+wire  [1:0] reg_addr      ;
+wire  [7:0] reg_write_data;
+logic [7:0] reg_data      ;
 
-assign Rd            = instruction[11:8];
-assign Rs            = instruction[ 7:4];
-assign Rd_write_data = Out              ;
-assign LED           = registers[2]     ;
+assign reg_addr       = instruction[1:0];
+assign reg_write_data = (Func == OP_LSW) ? SW[7:0] : acc;
+assign LED            = registers[0]    ;
 
-// Asynchronous Read
-always_comb begin
-    case (Rd)
-        0      : Rd_data = {7'b0, SW[8]};
-        default: Rd_data = registers[Rd];
-    endcase
-    case (Rs)
-        0      : Rs_data = SW[7:0]      ;
-        default: Rs_data = registers[Rs];
-    endcase
-end
-
-// Synchronous Write
+// Synchronous Read/Write
 always_ff @ (posedge Clock, negedge nReset)
     if (~nReset)
-        for (int i = 2; i < 9; ++i)
+        for (int i = 0; i < 4; i++)
             registers[i] <= #20 0;
-    else if (Rd > 1 && Rd_write)
-        registers[Rd] = Rd_write_data;
+    else begin
+        if (reg_write) begin
+            registers[reg_addr] <= #20 reg_write_data;
+            reg_data <= #20 reg_write_data;
+        end
+        else
+            reg_data <= #20 registers[reg_addr];
+    end
+
 //------------------------------------------------------------------------------
 // ALU -------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-wire signed [7:0] A, B     ;
+wire signed [7:0] B        ;
 wire        [7:0] immediate;
 
-assign immediate = instruction[7:0]  ;
-assign Func      = instruction[14:12];
-assign A         = Rd_data           ;
-assign B         = (Func[2]) ? immediate : Rs_data;
+assign immediate = {instruction[4], instruction[4], instruction[4:0], 1'b0}  ;
+assign Func      = instruction[7:5]                                          ;
+assign B         = (Func == OP_MULI || Func == OP_ADDI) ? immediate: reg_data;
 
-logic signed [6:0] tmp;
+logic signed [2:0] tmp;
 
-always_comb
-    case (Func)
-        OP_MULI : {Out, tmp} = A * B;
-        OP_MOV  : Out = B    ;
-        default : Out = A + B;
-    endcase
+always_ff @ (posedge Clock, negedge nReset)
+    if (~nReset)
+        acc <= #20 0;
+    else if (acc_we)
+        case (Func)
+            OP_MULI        : {acc, tmp} <= #20 acc * B;
+            OP_ADD, OP_ADDI:        acc <= #20 acc + B;
+            OP_RTA         :        acc <= #20 B      ;
+        endcase
 //------------------------------------------------------------------------------
 endmodule
 //------------------------------------------------------------------------------

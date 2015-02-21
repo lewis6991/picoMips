@@ -23,16 +23,16 @@ task run_affine_trans(bit signed [7:0] x1, y1);
     x2 = 0.75*x1 +  0.5*y1 + 20;
     y2 = -0.5*x1 + 0.75*y1 - 20;
 
-    #(5.5*clk_p) SW[ 9 ] = 1  ;
+    #(100.5*clk_p) SW[ 9 ] = 1  ;
                  SW[7:0] = x1 ;// Set x1
-    #(  5*clk_p) SW[ 8 ] = 1  ;
-    #(  5*clk_p) SW[ 8 ] = 0  ;
-    #(  5*clk_p) SW[7:0] = y1 ;// Set y1
-    #(  5*clk_p) SW[ 8 ] = 1  ;
-    #(  5*clk_p) SW[ 8 ] = 0  ;// 4.
-    #( 20*clk_p) x2_act  = LED;
+    #(  100*clk_p) SW[ 8 ] = 1  ;
+    #(  100*clk_p) SW[ 8 ] = 0  ;
+    #(  100*clk_p) SW[7:0] = y1 ;// Set y1
+    #(  100*clk_p) SW[ 8 ] = 1  ;
+    #(  100*clk_p) SW[ 8 ] = 0  ;// 4.
+    #( 400*clk_p) x2_act  = LED;
                  SW[ 8 ] = 1  ;
-    #(  5*clk_p) y2_act  = LED;
+    #(  100*clk_p) y2_act  = LED;
                  SW[ 8 ] = 0  ;
 
     #20
@@ -40,7 +40,7 @@ task run_affine_trans(bit signed [7:0] x1, y1);
     else $error("\n\tERROR: X2 is incorrect(%0d != %0d).\n", x2, x2_act);
     assert(y2 inside {y2_act, y2_act + 1})
     else $error("\n\tERROR: Y2 is incorrect(%0d != %0d).\n", y2, y2_act);
-    #( 25*clk_p);
+    #( 800*clk_p);
 endtask
 
 initial begin
