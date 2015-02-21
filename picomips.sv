@@ -106,18 +106,11 @@ assign reg_write_data = (Func == OP_LSW) ? SW[7:0] : acc;
 assign LED            = registers[0]    ;
 
 // Synchronous Read/Write
-always_ff @ (posedge Clock, negedge nReset)
-    if (~nReset)
-        for (int i = 0; i < 4; i++)
-            registers[i] <= #20 0;
-    else begin
-        if (reg_write) begin
-            registers[reg_addr] <= #20 reg_write_data;
-            reg_data <= #20 reg_write_data;
-        end
-        else
-            reg_data <= #20 registers[reg_addr];
-    end
+always_ff @ (posedge Clock) begin
+    if (reg_write)
+        registers[reg_addr] <= #20 reg_write_data;
+    reg_data <= #20 registers[reg_addr];
+end
 
 //------------------------------------------------------------------------------
 // ALU -------------------------------------------------------------------------
