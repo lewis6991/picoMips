@@ -1,21 +1,15 @@
 //------------------------------------------------------------------------------
-// File       : picoMips.sv
+// File       : picomips.sv
 // Author     : Lewis Russell
 // Description: Implementation of a picoMips for ELEC6233 Assignment.
 //------------------------------------------------------------------------------
+`include "opcodes.sv"
+`include "alu.sv"
 module picomips(
     input               Clock,
     input         [9:0] SW   ,
     output signed [7:0] LED
 );
-
-parameter OP_LSW  = 3'b001;
-parameter OP_RTA  = 3'b010;
-parameter OP_ATR  = 3'b011;
-parameter OP_ADD  = 3'b100;
-parameter OP_ADDI = 3'b101;
-parameter OP_MULI = 3'b110;
-parameter OP_HEI  = 3'b111;
 
 // Reigsters
 parameter REG_1 = 5'd0;
@@ -83,7 +77,7 @@ assign acc_we    = program_counter[0] && program_counter[1]    ;
 //------------------------------------------------------------------------------
 // Registers -------------------------------------------------------------------
 //------------------------------------------------------------------------------
-logic signed [7:0] registers[0:1];
+logic signed [7:0]registers [0:1];
 wire               reg_addr      ;
 logic signed [7:0] reg_data      ;
 
@@ -99,22 +93,23 @@ end
 //------------------------------------------------------------------------------
 // ALU -------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-wire signed [7:0] A        ;
 wire signed [7:0] immediate;
 
-assign immediate = {instruction[4], instruction[4], instruction[4:0], 1'b0}             ;
-assign Func      = instruction[7:5]                                                     ;
-assign A         = (Func == OP_LSW) ? SW[7:0] : (Func == OP_ADDI) ? immediate : reg_data;
+assign immediate = {instruction[4], instruction[4], instruction[4:0], 1'b0};
+assign Func      = instruction[7:5]                                        ;
 
-logic signed [2:0] tmp; // Dummy signal used to allign multiplier output. Gets optimised away by synthesiser.
+alu2 alu0(
+    .Clock  (Clock        ),
+    .Imm    (immediate    ),
+    .Func   (Func         ),
+    .WE     (acc_we       ),
+    .Out    (acc          ),
+    .SelImm (Func==OP_ADDI),
+    .SelSW  (Func==OP_LSW ),
+    .SW     (SW[7:0]      ),
+    .RegData(reg_data     )
+);
 
-always_ff @ (posedge Clock)
-    if (acc_we)
-        case (Func)
-            OP_MULI        : {acc, tmp} <= #20 acc * immediate;
-            OP_ADD, OP_ADDI:        acc <= #20 acc + A        ;
-            OP_RTA, OP_LSW :        acc <= #20 A              ;
-        endcase
 //------------------------------------------------------------------------------
 endmodule
 //------------------------------------------------------------------------------
