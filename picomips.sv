@@ -21,6 +21,7 @@ wire         [2:0] Func       ;
 logic signed [7:0] acc        ;
 logic              pc_hold    ;
 logic              acc_we     ;
+logic              reg_write  ;
 
 wire nReset;
 assign nReset = SW[9];
@@ -34,7 +35,7 @@ always_ff @ (posedge Clock, negedge nReset)
     if (~nReset)
         program_counter <= #20 0;
     else if (~pc_hold)
-        program_counter <= #20 program_counter + 1;
+        program_counter <= #20 program_counter + 7'd1;
 //------------------------------------------------------------------------------
 // Program Memory --------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -102,6 +103,7 @@ assign Func      = instruction[7:5]                                        ;
 
 alu alu0(
     .Clock  (Clock             ),
+	 .nReset (nReset            ),
     .Imm    (immediate         ),
     .Func   (Func              ),
     .WE     (acc_we            ),

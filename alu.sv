@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 module alu(
     input                     Clock  ,
+	 input                     nReset ,
     input        signed [7:0] Imm    ,
     input               [7:0] RegData,
     input               [7:0] SW     ,
@@ -64,8 +65,10 @@ assign mulb = {subimm[7:4], ~UseMul | subimm[3], subimm[2:0]};
 // Dummy signal used to allign multiplier output. Gets optimised away by synthesiser.
 logic signed [2:0] tmp;
 
-always_ff @ (posedge Clock)
-    if (WE)
+always_ff @ (posedge Clock, negedge nReset)
+   if (~nReset)
+	   ACC <= 8'd0;
+	else if (WE)
         {ACC, tmp} <= #20 mula * mulb;
 
 endmodule
