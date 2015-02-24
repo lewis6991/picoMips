@@ -1,4 +1,4 @@
 #! /bin/bash
 
 #ncverilog -sv -q +ncaccess+r +gui picomips_tb.sv picomips.sv +tcl+restore.tcl &
-ncverilog -sv -q picomips_tb.sv picomips.sv
+ncverilog -sv -q picomips_tb.sv picomips.sv +define+SIM

@@ -4,23 +4,8 @@
 // Description: Implementation of a picoMips for ELEC6233 Assignment.
 //------------------------------------------------------------------------------
 `include "opcodes.sv"
+`include "mul_ops.sv"
 `include "alu.sv"
-module mulmux(
-    input        [7:0] a,b,
-	 input              sel,
-	 output logic [7:0] out
-);
-
-logic [7:0] suba, subb, sa, sb;
-
-mult mult0 (.A({7'd0, ~sel}), .B(a), .ACC(suba));
-mult mult1 (.A({7'd0,  sel}), .B(b), .ACC(subb));
-assign sa = {suba[7:1], suba[0] | ~sel};
-assign sb = {subb[7:1], subb[0] |  sel};
-assign out = sa * sb;
-
-endmodule
-
 module picomips(
     input               Clock,
     input         [9:0] SW   ,
