@@ -107,6 +107,8 @@ alu2 alu0(
     .ACC    (acc      ),
     .SelImm (Func[2]  ),
     .SelSW  (Func[1]  ),
+    .UseMul (Func == OP_MULI),
+    .UseACC (Func[0]  ),
     .SW     (SW[7:0]  ),
     .RegData(reg_data )
 );
