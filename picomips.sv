@@ -101,17 +101,17 @@ assign immediate = {instruction[4], instruction[4], instruction[4:0], 1'b0};
 assign Func      = instruction[7:5]                                        ;
 
 alu alu0(
-    .Clock  (Clock    ),
-    .Imm    (immediate),
-    .Func   (Func     ),
-    .WE     (acc_we   ),
-    .ACC    (acc      ),
-    .SelImm (Func[2]  ),
-    .SelSW  (Func[1]  ),
-    .UseMul (Func == OP_MULI),
-    .UseACC (Func[0]  ),
-    .SW     (SW[7:0]  ),
-    .RegData(reg_data )
+    .Clock  (Clock             ),
+    .Imm    (immediate         ),
+    .Func   (Func              ),
+    .WE     (acc_we            ),
+    .ACC    (acc               ),
+    .SelImm (Func[2]           ),
+    .SelSW  (Func[1]           ),
+    .UseMul (Func[1] && Func[0]),
+    .UseACC (Func[0]           ),
+    .SW     (SW[7:0]           ),
+    .RegData(reg_data          )
 );
 
 //------------------------------------------------------------------------------

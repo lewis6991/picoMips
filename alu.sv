@@ -17,17 +17,13 @@ module alu(
     output logic signed [7:0] ACC
 );
 
-logic signed [7:0] mulb   ;
-logic signed [7:0] mula   ;
-logic signed [7:0] prod1  ;
-logic signed [7:0] prod2  ;
-logic signed [7:0] subdata;
-logic signed [7:0] data   ;
-logic signed [7:0] subimm ;
-
-//assign data = (SelSW ) ? SW      :
-//              (SelImm) ? Imm     :
-//                         RegData ;
+wire signed [7:0] mulb   ;
+wire signed [7:0] mula   ;
+wire signed [7:0] prod1  ;
+wire signed [7:0] prod2  ;
+wire signed [7:0] subdata;
+wire signed [7:0] data   ;
+wire signed [7:0] subimm ;
 
 mulmux mulmux0(
     .A  (SW     ),
