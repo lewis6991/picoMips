@@ -73,11 +73,12 @@ wire hei_arg;
 assign hei_arg   = instruction[0]                              ;
 assign reg_write = (Func == OP_ATR)                            ;
 assign pc_hold   = (Func == OP_HEI) ? (SW[8] == hei_arg) : 1'b0;
-assign acc_we    = program_counter[0] && program_counter[1]    ;
+assign acc_we    = program_counter[0] && program_counter[1]
+                        && !(Func == OP_HEI || Func == OP_ATR);
 //------------------------------------------------------------------------------
 // Registers -------------------------------------------------------------------
 //------------------------------------------------------------------------------
-logic signed [7:0]registers [0:1];
+logic signed [7:0] registers[0:1];
 wire               reg_addr      ;
 logic signed [7:0] reg_data      ;
 
@@ -99,15 +100,15 @@ assign immediate = {instruction[4], instruction[4], instruction[4:0], 1'b0};
 assign Func      = instruction[7:5]                                        ;
 
 alu2 alu0(
-    .Clock  (Clock        ),
-    .Imm    (immediate    ),
-    .Func   (Func         ),
-    .WE     (acc_we       ),
-    .Out    (acc          ),
-    .SelImm (Func==OP_ADDI),
-    .SelSW  (Func==OP_LSW ),
-    .SW     (SW[7:0]      ),
-    .RegData(reg_data     )
+    .Clock  (Clock    ),
+    .Imm    (immediate),
+    .Func   (Func     ),
+    .WE     (acc_we   ),
+    .ACC    (acc      ),
+    .SelImm (Func[2]  ),
+    .SelSW  (Func[1]  ),
+    .SW     (SW[7:0]  ),
+    .RegData(reg_data )
 );
 
 //------------------------------------------------------------------------------
