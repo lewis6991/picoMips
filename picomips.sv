@@ -101,7 +101,6 @@ alu alu0(
     .Clock  (Clock    ),
     .nReset (nReset   ),
     .Imm    (immediate),
-    .Func   (Func     ),
     .WE     (acc_we   ),
     .ACC    (acc      ),
     .UseMul (Func[3]  ),

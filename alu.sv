@@ -4,18 +4,17 @@
 // Description: Arithmetic logic unit for picoMips implementations.
 //------------------------------------------------------------------------------
 module alu(
-    input                     Clock  ,
-    input                     nReset ,
-    input        signed [7:0] Imm    ,
-    input               [7:0] RegData,
-    input               [7:0] SW     ,
-    input               [2:0] Func   ,
-    input                     WE     ,
-    input                     SelSW  ,
-    input                     SelImm ,
-    input                     UseMul ,
-    input                     UseACC ,
-    output logic signed [7:0] ACC
+    input              Clock  ,
+    input              nReset ,
+    input        [7:0] Imm    , // Immediate sign extended from instruction.
+    input        [7:0] RegData, // Data from register file.
+    input        [7:0] SW     , // Input switches.
+    input              WE     , // Write Enable for ACC.
+    input              SelSW  , // Select switches as an argument.
+    input              SelImm , // Select immediate as an argument.
+    input              UseMul , // Use Multiply operation.
+    input              UseACC , // Use ACC as an argument for operation.
+    output logic [7:0] ACC      // Accumulator.
 );
 
 wire signed [7:0] mulb   ;
