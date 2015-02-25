@@ -5,7 +5,7 @@
 //------------------------------------------------------------------------------
 module alu(
     input                     Clock  ,
-	 input                     nReset ,
+    input                     nReset ,
     input        signed [7:0] Imm    ,
     input               [7:0] RegData,
     input               [7:0] SW     ,

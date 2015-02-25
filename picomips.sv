@@ -16,12 +16,16 @@ module picomips(
 parameter REG_1 = 5'd0;
 parameter REG_2 = 5'd1;
 
-reg          [7:0] instruction;
-wire         [2:0] Func       ;
-logic signed [7:0] acc        ;
-logic              pc_hold    ;
-logic              acc_we     ;
-logic              reg_write  ;
+logic        [10:0] instruction;
+wire         [ 5:0] Func       ;
+logic signed [ 7:0] acc        ;
+logic               pc_hold    ;
+logic               acc_we     ;
+logic               reg_write  ;
+wire                hei_arg    ;
+wire  signed [ 7:0] immediate  ;
+wire                reg_addr   ;
+logic signed [ 7:0] reg_data   ;
 
 wire nReset;
 assign nReset = SW[9];
@@ -65,27 +69,24 @@ case (program_counter[6:2])
     21: instruction = {OP_RTA , REG_2}; // Load y2 into ACC
     22: instruction = {OP_ADDI, 5'd22}; // Add (-20) to (-0.5*x1 + 0.75*y1)
     23: instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
-    default: instruction = 0;
+    default: instruction = 11'd0;
 endcase
 //------------------------------------------------------------------------------
 // Decoder ---------------------------------------------------------------------
 //------------------------------------------------------------------------------
-wire hei_arg;
-
-assign hei_arg   = instruction[0]                              ;
-assign reg_write = (Func == OP_ATR)                            ;
-assign pc_hold   = (Func == OP_HEI) ? (SW[8] == hei_arg) : 1'b0;
+assign LED       = acc                                ;
+assign immediate = {instruction[4], instruction[4], instruction[4:0], 1'b0};
+assign Func      = instruction[10:5]                  ;
+assign hei_arg   = instruction[0]                     ;
+assign reg_addr  = instruction[0]                     ;
+assign reg_write = Func[4]                            ;
+assign pc_hold   = Func[5] ? (SW[8] == hei_arg) : 1'b0;
 assign acc_we    = program_counter[0] && program_counter[1]
-                        && !(Func == OP_HEI || Func == OP_ATR);
+                        && !(Func[5] || Func[4]);
 //------------------------------------------------------------------------------
 // Registers -------------------------------------------------------------------
 //------------------------------------------------------------------------------
 logic signed [7:0] registers[0:1];
-wire               reg_addr      ;
-logic signed [7:0] reg_data      ;
-
-assign reg_addr = instruction[0];
-assign LED      = acc           ;
 
 // Synchronous Read/Write
 always_ff @ (posedge Clock) begin
@@ -96,26 +97,20 @@ end
 //------------------------------------------------------------------------------
 // ALU -------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-wire signed [7:0] immediate;
-
-assign immediate = {instruction[4], instruction[4], instruction[4:0], 1'b0};
-assign Func      = instruction[7:5]                                        ;
-
 alu alu0(
-    .Clock  (Clock             ),
-	 .nReset (nReset            ),
-    .Imm    (immediate         ),
-    .Func   (Func              ),
-    .WE     (acc_we            ),
-    .ACC    (acc               ),
-    .SelImm (Func[2]           ),
-    .SelSW  (Func[1]           ),
-    .UseMul (Func[1] && Func[0]),
-    .UseACC (Func[0]           ),
-    .SW     (SW[7:0]           ),
-    .RegData(reg_data          )
+    .Clock  (Clock    ),
+    .nReset (nReset   ),
+    .Imm    (immediate),
+    .Func   (Func     ),
+    .WE     (acc_we   ),
+    .ACC    (acc      ),
+    .UseMul (Func[3]  ),
+    .SelImm (Func[2]  ),
+    .SelSW  (Func[1]  ),
+    .UseACC (Func[0]  ),
+    .SW     (SW[7:0]  ),
+    .RegData(reg_data )
 );
-
 //------------------------------------------------------------------------------
 endmodule
 //------------------------------------------------------------------------------
