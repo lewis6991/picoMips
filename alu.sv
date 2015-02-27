@@ -36,7 +36,11 @@ mul3mux mul3mux0(
     .Out(data      )
 );
 
-assign mula  = prod1 + data;
+muladd muladd0(
+    .A  (prod1),
+    .B  (data ),
+    .Out(mula )
+);
 
 mul0mux mul0mux0(
     .In (ACC   ),

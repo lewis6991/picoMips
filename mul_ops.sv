@@ -114,3 +114,36 @@ mult    mul1     (.A (subc), .B (subab), .Out(Out  ));
 
 endmodule
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+module muladd(
+    input        [7:0] A  ,
+    input        [7:0] B  ,
+    output logic [7:0] Out
+);
+
+logic [7:0] tmp;
+
+`ifdef SIM
+assign {Out, tmp} = {A, B} * {8'd1, 8'd1};
+`else
+lpm_mult lpm_mult_component (
+    .clken (1'b0        ),
+    .clock (1'b0        ),
+    .dataa ({A, B}      ),
+    .datab ({8'd1, 8'd1}),
+    .result({Out, tmp}  ),
+    .aclr  (1'b0        ),
+    .sum   (1'b0        )
+);
+defparam
+lpm_mult_component.lpm_hint = "INPUT_B_IS_CONSTANT=NO,DEDICATED_MULTIPLIER_CIRCUITRY=YES,MAXIMIZE_AREA=1",
+lpm_mult_component.lpm_pipeline = 0,
+lpm_mult_component.lpm_representation = "SIGNED",
+lpm_mult_component.lpm_type = "LPM_MULT",
+lpm_mult_component.lpm_widtha = 16,
+lpm_mult_component.lpm_widthb = 16,
+lpm_mult_component.lpm_widthp = 16;
+`endif
+
+endmodule
+//------------------------------------------------------------------------------
