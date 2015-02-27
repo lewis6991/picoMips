@@ -23,19 +23,17 @@ module alu(
 wire signed [7:0] mulb   ;
 wire signed [7:0] mula   ;
 wire signed [7:0] prod1  ;
-wire signed [7:0] prod2  ;
-wire signed [7:0] subdata;
 wire signed [7:0] data   ;
 wire signed [7:0] subimm ;
 
 mul3mux mul3mux0(
-    .A          (Imm       ),
-    .B          (SW        ),
-    .C          (RegData   ),
-    .SA         (SelImm    ),
-    .SB         (SelSW     ),
-    .SC         (SelRegData),
-    .Out        (data      )
+    .A  (Imm       ),
+    .B  (SW        ),
+    .C  (RegData   ),
+    .SA (SelImm    ),
+    .SB (SelSW     ),
+    .SC (SelRegData),
+    .Out(data      )
 );
 
 assign mula  = prod1 + data;
