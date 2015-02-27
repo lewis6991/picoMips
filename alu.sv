@@ -38,6 +38,7 @@ mul3mux mul3mux0(
     .Out        (data      )
 );
 
+//assign mula  = prod1 + prod2;
 assign mula  = prod1 + prod2;
 
 mul0mux mul0mux0(
@@ -46,11 +47,7 @@ mul0mux mul0mux0(
     .Out(prod1 )
 );
 
-mul0mux mul0mux1(
-    .In (data   ),
-    .En (~UseMul),
-    .Out(prod2  )
-);
+assign prod2 = {data[7:1] , data[0] & ~UseMul};
 
 mult mult0(
     .A  ({7'b0, UseMul}),
