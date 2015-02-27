@@ -16,8 +16,8 @@ module picomips(
 parameter REG_1 = 5'd0;
 parameter REG_2 = 5'd1;
 
-logic        [10:0] instruction;
-wire         [ 5:0] Func       ;
+logic        [11:0] instruction;
+wire         [ 6:0] Func       ;
 logic signed [ 7:0] acc        ;
 logic               pc_hold    ;
 logic               acc_we     ;
@@ -76,7 +76,7 @@ endcase
 //------------------------------------------------------------------------------
 assign LED       = acc                                ;
 assign immediate = {instruction[4], instruction[4], instruction[4:0], 1'b0};
-assign Func      = instruction[10:5]                  ;
+assign Func      = instruction[11:5]                  ;
 assign hei_arg   = instruction[0]                     ;
 assign reg_addr  = instruction[0]                     ;
 assign reg_write = Func[4]                            ;
@@ -98,17 +98,18 @@ end
 // ALU -------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 alu alu0(
-    .Clock  (Clock    ),
-    .nReset (nReset   ),
-    .Imm    (immediate),
-    .WE     (acc_we   ),
-    .ACC    (acc      ),
-    .UseMul (Func[3]  ),
-    .SelImm (Func[2]  ),
-    .SelSW  (Func[1]  ),
-    .UseACC (Func[0]  ),
-    .SW     (SW[7:0]  ),
-    .RegData(reg_data )
+    .Clock     (Clock    ),
+    .nReset    (nReset   ),
+    .Imm       (immediate),
+    .WE        (acc_we   ),
+    .ACC       (acc      ),
+    .UseMul    (Func[3]  ),
+    .SelImm    (Func[2]  ),
+    .SelSW     (Func[1]  ),
+    .SelRegData(Func[6]  ),
+    .UseACC    (Func[0]  ),
+    .SW        (SW[7:0]  ),
+    .RegData   (reg_data )
 );
 //------------------------------------------------------------------------------
 endmodule

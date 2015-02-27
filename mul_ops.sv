@@ -78,23 +78,32 @@ assign Out = {subOut[7:1], ~En | subOut[0]};
 endmodule
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-//  A -|---|
-//     |MUX|-Out
-//  B -|---|
-//       |
-//      Sel
-module mulmux(
+//  A -|-------|            SC | SB | SA |  Out
+//     |-------|             0    0    0 |   1
+//  B -|--MUX--|-Out         0    0    1 |   A
+//     |-------|             0    1    0 |   B
+//  C -|-------|             0    1    1 |  A*B
+//      |  |  |              1    0    0 |   C
+//     SA SB SC              1    0    1 |  A*C
+//                           1    1    0 |  B*C
+//                           1    1    1 | A*B*C
+module mul3mux(
     input        signed [7:0] A  ,
     input        signed [7:0] B  ,
-    input        signed       Sel,
+    input        signed [7:0] C  ,
+    input        signed       SA ,
+    input        signed       SB ,
+    input        signed       SC ,
     output logic signed [7:0] Out
 );
 
-logic [7:0] suba, subb;
+logic [7:0] suba, subb, subc, subab;
 
-mul1mux mul1mux0 (.In(A), .En(Sel ), .Out(suba));
-mul1mux mul1mux1 (.In(B), .En(~Sel), .Out(subb));
-assign Out = suba * subb;
+mul1mux mul1mux0 (.In(A   ), .En(SA   ), .Out(suba ));
+mul1mux mul1mux1 (.In(B   ), .En(SB   ), .Out(subb ));
+mul1mux mul1mux2 (.In(C   ), .En(SC   ), .Out(subc ));
+mult    mul0     (.A (suba), .B (subb ), .Out(subab));
+mult    mul1     (.A (subc), .B (subab), .Out(Out  ));
 
 endmodule
 //------------------------------------------------------------------------------
