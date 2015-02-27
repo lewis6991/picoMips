@@ -35,7 +35,6 @@ mul3mux mul3mux0(
     .SA         (SelImm    ),
     .SB         (SelSW     ),
     .SC         (SelRegData),
-    .Z          (UseMul    ),
     .Out        (data      )
 );
 
