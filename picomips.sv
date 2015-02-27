@@ -24,6 +24,7 @@ wire                reg_write      ;
 wire  signed [ 7:0] immediate      ;
 wire                reg_addr       ;
 wire  signed [ 7:0] reg_data       ;
+wire                use_mul        ;
 wire                use_acc        ;
 wire                sel_imm        ;
 wire                sel_sw         ;
@@ -75,6 +76,7 @@ alu alu0(
     .Imm       (immediate   ),
     .WE        (acc_we      ),
     .ACC       (acc         ),
+    .UseMul    (use_mul     ),
     .SelImm    (sel_imm     ),
     .SelSW     (sel_sw      ),
     .SelRegData(sel_reg_data),
