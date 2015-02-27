@@ -79,7 +79,7 @@ endmodule
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //  A -|-------|            SC | SB | SA |  Out
-//     |-------|             0    0    0 |   1
+//     |-------|             0    0    0 |   0
 //  B -|--MUX--|-Out         0    0    1 |   A
 //     |-------|             0    1    0 |   B
 //  C -|-------|             0    1    1 |  A*B
@@ -94,7 +94,6 @@ module mul3mux(
     input                     SA ,
     input                     SB ,
     input                     SC ,
-    input                     Z  ,
     output logic signed [7:0] Out
 );
 
@@ -106,9 +105,8 @@ mult mult0(
     .Out(suba2     )
 );
 
-assign suba = {suba2[7:1], ~SA && ~Z | suba2[0]};
+assign suba = {suba2[7:1], (~SA | suba2[0]) & (SA | SB | SC)};
 
-//mul1mux mul1mux0 (.In(A   ), .En(SA   ), .Out(suba ));
 mul1mux mul1mux1 (.In(B   ), .En(SB   ), .Out(subb ));
 mul1mux mul1mux2 (.In(C   ), .En(SC   ), .Out(subc ));
 mult    mul0     (.A (suba), .B (subb ), .Out(subab));

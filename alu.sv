@@ -15,7 +15,6 @@ module alu(
     input              SelSW     , // Select switches as an argument.
     input              SelImm    , // Select immediate as an argument.
     input              SelRegData, // Select regdata as an argument.
-    input              UseMul    , // Use Multiply operation.
     input              UseACC    , // Use ACC as an argument for operation.
     output logic [7:0] ACC         // Accumulator.
 );
@@ -35,7 +34,6 @@ mul3mux mul3mux0(
     .SA         (SelImm    ),
     .SB         (SelSW     ),
     .SC         (SelRegData),
-    .Z          (UseMul    ),
     .Out        (data      )
 );
 
@@ -48,12 +46,12 @@ mul0mux mul0mux0(
 );
 
 mult mult0(
-    .A  ({7'b0, UseMul}),
+    .A  ({7'b0, ~SelImm & ~SelSW & ~SelRegData}),
     .B  (Imm           ),
     .Out(subimm        )
 );
 
-assign mulb = {subimm[7:4], ~UseMul | subimm[3], subimm[2:0]};
+assign mulb = {subimm[7:4], SelImm | SelSW | SelRegData | subimm[3], subimm[2:0]};
 
 // Dummy signal used to allign multiplier output. Gets optimised away by synthesiser.
 logic signed [2:0] tmp;
