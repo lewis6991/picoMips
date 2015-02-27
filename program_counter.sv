@@ -17,6 +17,7 @@ always_ff @ (posedge Clock, negedge nReset)
     else if (~PCHold)
         ProgramCounter <= #20 ProgramCounter + 7'd1;
 `else
+logic [7:0] tmp;
 lpm_mult lpm_mult_component (
     .clken (1'b0                                 ),
     .clock (Clock                                ),
@@ -27,7 +28,7 @@ lpm_mult lpm_mult_component (
     .sum   (1'b0                                 )
 );
 defparam
-lpm_mult_component.lpm_hint = "INPUT_B_IS_CONSTANT=NO,DEDICATED_MULTIPLIER_CIRCUITRY=YES,MAXIMIZE_AREA=1",
+lpm_mult_component.lpm_hint = "DEDICATED_MULTIPLIER_CIRCUITRY=YES",
 lpm_mult_component.lpm_pipeline = 1,
 lpm_mult_component.lpm_representation = "SIGNED",
 lpm_mult_component.lpm_type = "LPM_MULT",

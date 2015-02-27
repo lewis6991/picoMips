@@ -4,10 +4,10 @@
 // Description: Collection of small modules that implement simple functions
 //              using multipliers.
 //------------------------------------------------------------------------------
-module mult(
-    input  signed [7:0] A  ,
-    input  signed [7:0] B  ,
-    output signed [7:0] Out
+module mult #(parameter n = 8)(
+    input  signed [n-1:0] A  ,
+    input  signed [n-1:0] B  ,
+    output signed [n-1:0] Out
 );
 
 `ifdef SIM
@@ -27,9 +27,9 @@ lpm_mult_component.lpm_hint = "INPUT_B_IS_CONSTANT=NO,DEDICATED_MULTIPLIER_CIRCU
 lpm_mult_component.lpm_pipeline = 0,
 lpm_mult_component.lpm_representation = "SIGNED",
 lpm_mult_component.lpm_type = "LPM_MULT",
-lpm_mult_component.lpm_widtha = 8,
-lpm_mult_component.lpm_widthb = 8,
-lpm_mult_component.lpm_widthp = 8;
+lpm_mult_component.lpm_widtha = n,
+lpm_mult_component.lpm_widthb = n,
+lpm_mult_component.lpm_widthp = n;
 `endif
 endmodule
 //------------------------------------------------------------------------------
@@ -115,6 +115,7 @@ mult    mul1     (.A (subc), .B (subab), .Out(Out  ));
 endmodule
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+// Out = A + B
 module muladd(
     input        [7:0] A  ,
     input        [7:0] B  ,
@@ -123,27 +124,11 @@ module muladd(
 
 logic [7:0] tmp;
 
-`ifdef SIM
-assign {Out, tmp} = {A, B} * {8'd1, 8'd1};
-`else
-lpm_mult lpm_mult_component (
-    .clken (1'b0        ),
-    .clock (1'b0        ),
-    .dataa ({A, B}      ),
-    .datab ({8'd1, 8'd1}),
-    .result({Out, tmp}  ),
-    .aclr  (1'b0        ),
-    .sum   (1'b0        )
+mult #(16) mul0(
+    .A  ({   A,    B}),
+    .B  ({8'd1, 8'd1}),
+    .Out({ Out,  tmp})
 );
-defparam
-lpm_mult_component.lpm_hint = "INPUT_B_IS_CONSTANT=NO,DEDICATED_MULTIPLIER_CIRCUITRY=YES,MAXIMIZE_AREA=1",
-lpm_mult_component.lpm_pipeline = 0,
-lpm_mult_component.lpm_representation = "SIGNED",
-lpm_mult_component.lpm_type = "LPM_MULT",
-lpm_mult_component.lpm_widtha = 16,
-lpm_mult_component.lpm_widthb = 16,
-lpm_mult_component.lpm_widthp = 16;
-`endif
 
 endmodule
 //------------------------------------------------------------------------------
