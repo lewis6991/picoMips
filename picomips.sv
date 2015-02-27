@@ -69,7 +69,7 @@ case (program_counter[6:2])
     21: instruction = {OP_RTA , REG_2}; // Load y2 into ACC
     22: instruction = {OP_ADDI, 5'd22}; // Add (-20) to (-0.5*x1 + 0.75*y1)
     23: instruction = {OP_HEI , 5'd1 }; // Wait for SW8 to become 0
-    default: instruction = 11'd0;
+    default: instruction = 12'd0;
 endcase
 //------------------------------------------------------------------------------
 // Decoder ---------------------------------------------------------------------
