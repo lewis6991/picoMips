@@ -3,6 +3,8 @@
 // Author     : Lewis Russell
 // Description: Arithmetic logic unit for picoMips implementations.
 //------------------------------------------------------------------------------
+`include "opcodes.sv"
+`include "mul_ops.sv"
 module alu(
     input              Clock     ,
     input              nReset    ,
