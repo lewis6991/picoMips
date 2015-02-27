@@ -35,19 +35,17 @@ mul3mux mul3mux0(
     .SA         (SelImm    ),
     .SB         (SelSW     ),
     .SC         (SelRegData),
+    .Z          (UseMul    ),
     .Out        (data      )
 );
 
-//assign mula  = prod1 + prod2;
-assign mula  = prod1 + prod2;
+assign mula  = prod1 + data;
 
 mul0mux mul0mux0(
     .In (ACC   ),
     .En (UseACC),
     .Out(prod1 )
 );
-
-assign prod2 = {data[7:1] , data[0] & ~UseMul};
 
 mult mult0(
     .A  ({7'b0, UseMul}),

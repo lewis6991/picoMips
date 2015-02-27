@@ -91,15 +91,24 @@ module mul3mux(
     input        signed [7:0] A  ,
     input        signed [7:0] B  ,
     input        signed [7:0] C  ,
-    input        signed       SA ,
-    input        signed       SB ,
-    input        signed       SC ,
+    input                     SA ,
+    input                     SB ,
+    input                     SC ,
+    input                     Z  ,
     output logic signed [7:0] Out
 );
 
-logic [7:0] suba, subb, subc, subab;
+logic [7:0] suba, subb, subc, subab, suba2;
 
-mul1mux mul1mux0 (.In(A   ), .En(SA   ), .Out(suba ));
+mult mult0(
+    .A  (A         ),
+    .B  ({7'd0, SA}),
+    .Out(suba2     )
+);
+
+assign suba = {suba2[7:1], ~SA && ~Z | suba2[0]};
+
+//mul1mux mul1mux0 (.In(A   ), .En(SA   ), .Out(suba ));
 mul1mux mul1mux1 (.In(B   ), .En(SB   ), .Out(subb ));
 mul1mux mul1mux2 (.In(C   ), .En(SC   ), .Out(subc ));
 mult    mul0     (.A (suba), .B (subb ), .Out(subab));
