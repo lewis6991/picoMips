@@ -119,15 +119,17 @@ endmodule
 module muladd(
     input        [7:0] A  ,
     input        [7:0] B  ,
+    input              EnA,
+    input              EnB,
     output logic [7:0] Out
 );
 
 logic [7:0] tmp;
 
 mult #(16) mul0(
-    .A  ({   A,    B}),
-    .B  ({8'd1, 8'd1}),
-    .Out({ Out,  tmp})
+    .A  ({        A,         B}),
+    .B  ({7'd0, EnB, 7'd0, EnA}),
+    .Out({      Out,       tmp})
 );
 
 endmodule

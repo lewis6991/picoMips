@@ -6,46 +6,41 @@
 `include "opcodes.sv"
 `include "mul_ops.sv"
 module alu(
-    input              Clock     ,
-    input              nReset    ,
-    input        [7:0] Imm       , // Immediate sign extended from instruction.
-    input        [7:0] RegData   , // Data from register file.
-    input        [7:0] SW        , // Input switches.
-    input              WE        , // Write Enable for ACC.
-    input              SelSW     , // Select switches as an argument.
-    input              SelImm    , // Select immediate as an argument.
-    input              SelRegData, // Select regdata as an argument.
-    input              UseMul    , // Use Multiply operation.
-    input              UseACC    , // Use ACC as an argument for operation.
-    output logic [7:0] ACC         // Accumulator.
+    input              Clock  ,
+    input              nReset ,
+    input        [7:0] Imm    , // Immediate sign extended from instruction.
+    input        [7:0] RegData, // Data from register file.
+    input        [7:0] SW     , // Input switches.
+    input              WE     , // Write Enable for ACC.
+    input              SelSW  , // Select switches as an argument.
+    input              SelImm , // Select immediate as an argument.
+    input              SelReg , // Select regdata as an argument.
+    input              UseMul , // Use Multiply operation.
+    input              UseACC , // Use ACC as an argument for operation.
+    output logic [7:0] ACC      // Accumulator.
 );
 
-wire signed [7:0] mulb   ;
-wire signed [7:0] mula   ;
-wire signed [7:0] prod1  ;
-wire signed [7:0] data   ;
-wire signed [7:0] subimm ;
+wire signed [7:0] mulb  ;
+wire signed [7:0] mula  ;
+wire signed [7:0] data  ;
+wire signed [7:0] subimm;
 
 mul3mux mul3mux0(
-    .A  (Imm       ),
-    .B  (SW        ),
-    .C  (RegData   ),
-    .SA (SelImm    ),
-    .SB (SelSW     ),
-    .SC (SelRegData),
-    .Out(data      )
+    .A  (Imm    ),
+    .B  (SW     ),
+    .C  (RegData),
+    .SA (SelImm ),
+    .SB (SelSW  ),
+    .SC (SelReg ),
+    .Out(data   )
 );
 
-muladd muladd0(
-    .A  (prod1),
-    .B  (data ),
-    .Out(mula )
-);
-
-mul0mux mul0mux0(
-    .In (ACC   ),
-    .En (UseACC),
-    .Out(prod1 )
+muladd  muladd0 (
+    .A  (UseAcc),
+    .B  (data  ),
+    .EnA(UseACC),
+    .EnB(1'b1  ),
+    .Out(mula  )
 );
 
 mult mult0(

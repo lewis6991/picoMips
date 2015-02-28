@@ -28,7 +28,7 @@ wire                use_mul        ;
 wire                use_acc        ;
 wire                sel_imm        ;
 wire                sel_sw         ;
-wire                sel_reg_data   ;
+wire                sel_reg        ;
 
 assign nReset = SW[9];
 assign LED    = acc  ;
@@ -58,7 +58,7 @@ control control0(
     .SelSW      (sel_sw              ),
     .UseMul     (use_mul             ),
     .UseACC     (use_acc             ),
-    .SelRegData (sel_reg_data        ),
+    .SelRegData (sel_reg             ),
     .Handshake  (SW[8]               )
 );
 
@@ -71,18 +71,18 @@ registers registers0(
 );
 
 alu alu0(
-    .Clock     (Clock       ),
-    .nReset    (nReset      ),
-    .Imm       (immediate   ),
-    .WE        (acc_we      ),
-    .ACC       (acc         ),
-    .UseMul    (use_mul     ),
-    .SelImm    (sel_imm     ),
-    .SelSW     (sel_sw      ),
-    .SelRegData(sel_reg_data),
-    .UseACC    (use_acc     ),
-    .SW        (SW[7:0]     ),
-    .RegData   (reg_data    )
+    .Clock  (Clock    ),
+    .nReset (nReset   ),
+    .Imm    (immediate),
+    .WE     (acc_we   ),
+    .ACC    (acc      ),
+    .UseMul (use_mul  ),
+    .SelImm (sel_imm  ),
+    .SelSW  (sel_sw   ),
+    .SelReg (sel_reg  ),
+    .UseACC (use_acc  ),
+    .SW     (SW[7:0]  ),
+    .RegData(reg_data )
 );
 
 endmodule
