@@ -34,87 +34,6 @@ lpm_mult_component.lpm_widthp = n;
 endmodule
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-// In -|---|
-//     |MUX|-Out
-//  0 -|---|
-//       |
-//      En
-module mul0mux(
-    input  signed [7:0] In ,
-    input               En ,
-    output signed [7:0] Out
-);
-
-mult mult0(
-    .A  (In        ),
-    .B  ({7'd0, En}),
-    .Out(Out       )
-);
-
-endmodule
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-// In -|---|
-//     |MUX|-Out
-//  1 -|---|
-//       |
-//      En
-module mul1mux(
-    input  signed [7:0] In ,
-    input               En ,
-    output signed [7:0] Out
-);
-
-logic [7:0] subOut;
-
-mult mult0(
-    .A  (In        ),
-    .B  ({7'd0, En}),
-    .Out(subOut    )
-);
-
-assign Out = {subOut[7:1], ~En | subOut[0]};
-
-endmodule
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//  A -|-------|            SC | SB | SA |  Out
-//     |-------|             0    0    0 |   0
-//  B -|--MUX--|-Out         0    0    1 |   A
-//     |-------|             0    1    0 |   B
-//  C -|-------|             0    1    1 |  A*B
-//      |  |  |              1    0    0 |   C
-//     SA SB SC              1    0    1 |  A*C
-//                           1    1    0 |  B*C
-//                           1    1    1 | A*B*C
-module mul3mux(
-    input        signed [7:0] A  ,
-    input        signed [7:0] B  ,
-    input        signed [7:0] C  ,
-    input                     SA ,
-    input                     SB ,
-    input                     SC ,
-    output logic signed [7:0] Out
-);
-
-logic [7:0] suba, subb, subc, subab, suba2;
-
-mult mult0(
-    .A  (A         ),
-    .B  ({7'd0, SA}),
-    .Out(suba2     )
-);
-
-assign suba = {suba2[7:1], (~SA | suba2[0]) & (SA | SB | SC)};
-
-mul1mux mul1mux1 (.In(B   ), .En(SB   ), .Out(subb ));
-mul1mux mul1mux2 (.In(C   ), .En(SC   ), .Out(subc ));
-mult    mul0     (.A (suba), .B (subb ), .Out(subab));
-mult    mul1     (.A (subc), .B (subab), .Out(Out  ));
-
-endmodule
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 // Out = A + B
 module muladd(
     input        [7:0] A  ,
@@ -134,3 +53,38 @@ mult #(16) mul0(
 
 endmodule
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//  A -|-------|            SC | SB | SA |  Out
+//     |-------|             0    0    0 |   0
+//  B -|--MUX--|-Out         0    0    1 |   A
+//     |-------|             0    1    0 |   B
+//  C -|-------|             0    1    1 |  A+B
+//      |  |  |              1    0    0 |   C
+//     SA SB SC              1    0    1 |  A+C
+//                           1    1    0 |  B+C
+//                           1    1    1 | A+B+C
+module mul3mux(
+    input        signed [7:0] A  ,
+    input        signed [7:0] B  ,
+    input        signed [7:0] C  ,
+    input                     SA ,
+    input                     SB ,
+    input                     SC ,
+    output logic signed [7:0] Out
+);
+
+logic [7:0] tmp0, tmp1, subout;
+
+mult #(16) mult0(
+    .A  ({       A,        B}),
+    .B  ({7'd0, SB, 7'd0, SA}),
+    .Out({  subout,     tmp0})
+);
+
+mult #(16) mult1(
+    .A  ({  subout,         C}),
+    .B  ({7'd0, SC, 7'd0, ~SC}),
+    .Out({     Out,      tmp1})
+);
+
+endmodule

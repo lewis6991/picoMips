@@ -35,7 +35,7 @@ mul3mux mul3mux0(
     .Out(data   )
 );
 
-muladd  muladd0 (
+muladd muladd0(
     .A  (ACC   ),
     .B  (data  ),
     .EnA(UseACC),
