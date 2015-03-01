@@ -36,17 +36,21 @@ mul3mux mul3mux0(
 );
 
 muladd muladd0(
-    .A  (ACC   ),
-    .B  (data  ),
-    .EnA(UseACC),
-    .EnB(1'b1  ),
-    .Out(mula  )
+    .A     (ACC   ),
+    .B     (data  ),
+    .EnA   (UseACC),
+    .EnB   (1'b1  ),
+    .Out   (mula  ),
+    .Clock (1'd0  ),
+    .nReset(1'd0  )
 );
 
 mult mult0(
-    .A  ({7'b0, UseMul}),
-    .B  (Imm           ),
-    .Out(subimm        )
+    .A     ({7'b0, UseMul}),
+    .B     (Imm           ),
+    .Out   (subimm        ),
+    .Clock (1'd0          ),
+    .nReset(1'd0          )
 );
 
 assign mulb = {subimm[7:4], ~UseMul | subimm[3], subimm[2:0]};

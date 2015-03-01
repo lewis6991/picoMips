@@ -4,51 +4,70 @@
 // Description: Collection of small modules that implement simple functions
 //              using multipliers.
 //------------------------------------------------------------------------------
-module mult #(parameter n = 8)(
-    input  signed [n-1:0] A  ,
-    input  signed [n-1:0] B  ,
+module mult #(
+    parameter n = 8, // Input width
+    parameter p = 0  // Pipelined
+)(
+    input  signed [n-1:0] A     ,
+    input  signed [n-1:0] B     ,
+    input                 Clock ,
+    input                 nReset,
     output signed [n-1:0] Out
 );
+`ifdef SIM // Behavourial model
+    logic [n-1:0] pOut, mOut;
 
-`ifdef SIM
-    assign Out = (A == 0 || B == 0) ? 0 : A * B;
-`else
+    assign mOut = (A == 0 || B == 0) ? 0 : A * B;
+
+    always_ff @ (posedge Clock, negedge nReset)
+        if (~nReset)
+            pOut <= 0;
+        else
+            pOut <= #20 mOut;
+
+    assign Out = p ? pOut : mOut;
+
+`else // FPGA implementation
 lpm_mult lpm_mult_component (
-    .clken  (1'b0),
-    .clock  (1'b0),
-    .dataa  (A   ),
-    .datab  (B   ),
-    .result (Out ),
-    .aclr   (1'b0),
-    .sum    (1'b0)
+    .clken  (1'b0              ),
+    .clock  (p ?   Clock : 1'd0),
+    .dataa  (A                 ),
+    .datab  (B                 ),
+    .result (Out               ),
+    .aclr   (p ? ~nReset : 1'd0),
+    .sum    (1'b0              )
 );
 defparam
-lpm_mult_component.lpm_hint = "INPUT_B_IS_CONSTANT=NO,DEDICATED_MULTIPLIER_CIRCUITRY=YES,MAXIMIZE_AREA=1",
-lpm_mult_component.lpm_pipeline = 0,
-lpm_mult_component.lpm_representation = "SIGNED",
-lpm_mult_component.lpm_type = "LPM_MULT",
-lpm_mult_component.lpm_widtha = n,
-lpm_mult_component.lpm_widthb = n,
-lpm_mult_component.lpm_widthp = n;
+lpm_mult_component.lpm_hint           = "DEDICATED_MULTIPLIER_CIRCUITRY = YES",
+lpm_mult_component.lpm_pipeline       = p                                     ,
+lpm_mult_component.lpm_representation = "SIGNED"                              ,
+lpm_mult_component.lpm_type           = "LPM_MULT"                            ,
+lpm_mult_component.lpm_widtha         = n                                     ,
+lpm_mult_component.lpm_widthb         = n                                     ,
+lpm_mult_component.lpm_widthp         = n                                     ;
 `endif
 endmodule
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 // Out = A + B
-module muladd(
-    input        [7:0] A  ,
-    input        [7:0] B  ,
-    input              EnA,
-    input              EnB,
+module muladd #(parameter p = 0)(
+    input        [7:0] A     ,
+    input        [7:0] B     ,
+    input              EnA   ,
+    input              EnB   ,
+    input              Clock ,
+    input              nReset,
     output logic [7:0] Out
 );
 
 logic [7:0] tmp;
 
-mult #(16) mul0(
-    .A  ({        A,         B}),
-    .B  ({7'd0, EnB, 7'd0, EnA}),
-    .Out({      Out,       tmp})
+mult #(16, p) mul0(
+    .A     ({        A,         B}),
+    .B     ({7'd0, EnB, 7'd0, EnA}),
+    .Clock (Clock                 ),
+    .nReset(nReset                ),
+    .Out   ({      Out,       tmp})
 );
 
 endmodule
@@ -76,15 +95,19 @@ module mul3mux(
 logic [7:0] tmp0, tmp1, subout;
 
 mult #(16) mult0(
-    .A  ({       A,        B}),
-    .B  ({7'd0, SB, 7'd0, SA}),
-    .Out({  subout,     tmp0})
+    .A     ({       A,        B}),
+    .B     ({7'd0, SB, 7'd0, SA}),
+    .Out   ({  subout,     tmp0}),
+    .Clock (1'd0                ),
+    .nReset(1'd0                )
 );
 
 mult #(16) mult1(
-    .A  ({  subout,         C}),
-    .B  ({7'd0, SC, 7'd0, ~SC}),
-    .Out({     Out,      tmp1})
+    .A     ({  subout,         C}),
+    .B     ({7'd0, SC, 7'd0, ~SC}),
+    .Out   ({     Out,      tmp1}),
+    .Clock (1'd0                 ),
+    .nReset(1'd0                 )
 );
 
 endmodule
