@@ -8,6 +8,7 @@
 `include "control.sv"
 `include "registers.sv"
 `include "alu.sv"
+`include "mul_ops.sv"
 module picomips(
     input               Clock,
     input         [9:0] SW   ,
@@ -22,6 +23,7 @@ wire                pc_hold        ;
 wire                acc_we         ;
 wire                reg_write      ;
 wire  signed [ 7:0] immediate      ;
+wire  signed [ 7:0] data           ;
 wire                reg_addr       ;
 wire  signed [ 7:0] reg_data       ;
 wire                use_mul        ;
@@ -70,19 +72,25 @@ registers registers0(
     .Data     (reg_data )
 );
 
+mul3mux mul3mux0(
+    .A  (immediate),
+    .B  (SW[7:0]  ),
+    .C  (reg_data ),
+    .SA (sel_imm  ),
+    .SB (sel_sw   ),
+    .SC (sel_reg  ),
+    .Out(data     )
+);
+
 alu alu0(
     .Clock  (Clock    ),
     .nReset (nReset   ),
-    .Imm    (immediate),
     .WE     (acc_we   ),
     .ACC    (acc      ),
+    .DataA  (acc      ),
+    .DataB  (data     ),
     .UseMul (use_mul  ),
-    .SelImm (sel_imm  ),
-    .SelSW  (sel_sw   ),
-    .SelReg (sel_reg  ),
-    .UseACC (use_acc  ),
-    .SW     (SW[7:0]  ),
-    .RegData(reg_data )
+    .UseA   (use_a    ),
 );
 
 endmodule
