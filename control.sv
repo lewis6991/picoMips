@@ -19,15 +19,17 @@ module control(
     output logic        SelReg
 );
 
-wire       hei_arg;
-wire [5:0] func   ;
+logic       hei    ;
+wire        hei_arg;
+wire  [5:0] func   ;
 
-assign func       = Instruction[11:6];
-assign hei_arg    = Instruction[0]   ;
+assign func      = Instruction[11:6];
+assign hei       = SelReg && SelImm ;
+assign hei_arg   = Instruction[0]   ;
 
 assign Immediate = {Instruction[5], Instruction[5], Instruction[5:0]};
-assign PCHold    = SelReg && SelImm ? (Handshake == hei_arg) : 1'b0  ;
-assign ACCWE     = ~Stage[0] && Stage[1] && !(SelReg && SelImm)      ;
+assign PCHold    = hei && (Handshake == hei_arg);
+assign ACCWE     = (Stage == 2'b10) && !hei     ;
 assign RegAddr   = Instruction[0];
 assign UseA      = func[0];
 assign SelSW     = func[1];

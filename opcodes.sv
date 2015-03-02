@@ -13,6 +13,7 @@ parameter OP_MULR  = 6'b101001; // Multiply register to accumulator.
 parameter OP_MULI  = 6'b001101; // Multiply immediate to accumulator.
 parameter OP_MULS  = 6'b001011; // Multiply switches to accumulator.
 parameter OP_CA    = 6'b000000; // Clear accumulator.
+parameter OP_CR    = 6'b010000; // Clear register and accumulator.
 parameter OP_NOP   = 6'b000001; // No operation.
 parameter OP_AR    = 6'b010001; // Accumulator-to-register.
 parameter OP_HEI   = 6'b100100; // Hold PC whilst SW[8] is equal to immediate.
