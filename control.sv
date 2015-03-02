@@ -4,7 +4,7 @@
 // Description: Implementation of a picoMips for ELEC6233 Assignment.
 //------------------------------------------------------------------------------
 module control(
-    input        [12:0] Instruction,
+    input        [11:0] Instruction,
     input        [ 1:0] Stage      ,
     input               Handshake  ,
     output logic [ 7:0] Immediate  ,
@@ -20,20 +20,20 @@ module control(
 );
 
 wire       hei_arg;
-wire [6:0] func   ;
+wire [5:0] func   ;
 
-assign func       = Instruction[12:6];
+assign func       = Instruction[11:6];
 assign hei_arg    = Instruction[0]   ;
 
 assign Immediate = {Instruction[5], Instruction[5], Instruction[5:0]};
-assign PCHold    = func[5] ? (Handshake == hei_arg) : 1'b0           ;
-assign ACCWE     = ~Stage[0] && Stage[1] && !(func[5] || func[4])    ;
+assign PCHold    = SelReg && SelImm ? (Handshake == hei_arg) : 1'b0  ;
+assign ACCWE     = ~Stage[0] && Stage[1] && !(SelReg && SelImm)      ;
 assign RegAddr   = Instruction[0];
 assign UseA      = func[0];
 assign SelSW     = func[1];
 assign SelImm    = func[2];
 assign UseMul    = func[3];
 assign RegWrite  = func[4];
-assign SelReg    = func[6];
+assign SelReg    = func[5];
 
 endmodule

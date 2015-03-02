@@ -16,7 +16,7 @@ module picomips(
 );
 
 wire                nReset         ;
-wire         [12:0] instruction    ;
+wire         [11:0] instruction    ;
 wire  signed [ 7:0] acc            ;
 wire         [ 6:0] program_counter;
 wire                pc_hold        ;
