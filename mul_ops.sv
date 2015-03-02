@@ -4,6 +4,8 @@
 // Description: Collection of small modules that implement simple functions
 //              using multipliers.
 //------------------------------------------------------------------------------
+`ifndef MUL_OPS
+`define MUL_OPS
 module mult #(
     parameter n = 8, // Input width
     parameter p = 0  // Pipelined
@@ -111,3 +113,5 @@ mult #(16) mult1(
 );
 
 endmodule
+
+`endif

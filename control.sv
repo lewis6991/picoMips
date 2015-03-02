@@ -15,8 +15,8 @@ module control(
     output logic        SelImm     ,
     output logic        SelSW      ,
     output logic        UseMul     ,
-    output logic        UseACC     ,
-    output logic        SelRegData
+    output logic        UseA       ,
+    output logic        SelReg
 );
 
 wire       hei_arg;
@@ -25,15 +25,15 @@ wire [6:0] func   ;
 assign func       = Instruction[12:6];
 assign hei_arg    = Instruction[0]   ;
 
-assign Immediate  = {Instruction[5], Instruction[5], Instruction[5:0]};
-assign PCHold     = func[5] ? (Handshake == hei_arg) : 1'b0           ;
-assign ACCWE      = Stage[0] && Stage[1] && !(func[5] || func[4])     ;
-assign RegAddr    = Instruction[0];
-assign UseACC     = func[0];
-assign SelSW      = func[1];
-assign SelImm     = func[2];
-assign UseMul     = func[3];
-assign RegWrite   = func[4];
-assign SelRegData = func[6];
+assign Immediate = {Instruction[5], Instruction[5], Instruction[5:0]};
+assign PCHold    = func[5] ? (Handshake == hei_arg) : 1'b0           ;
+assign ACCWE     = ~Stage[0] && Stage[1] && !(func[5] || func[4])    ;
+assign RegAddr   = Instruction[0];
+assign UseA      = func[0];
+assign SelSW     = func[1];
+assign SelImm    = func[2];
+assign UseMul    = func[3];
+assign RegWrite  = func[4];
+assign SelReg    = func[6];
 
 endmodule

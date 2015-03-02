@@ -27,7 +27,7 @@ wire  signed [ 7:0] data           ;
 wire                reg_addr       ;
 wire  signed [ 7:0] reg_data       ;
 wire                use_mul        ;
-wire                use_acc        ;
+wire                use_a          ;
 wire                sel_imm        ;
 wire                sel_sw         ;
 wire                sel_reg        ;
@@ -59,8 +59,8 @@ control control0(
     .SelImm     (sel_imm             ),
     .SelSW      (sel_sw              ),
     .UseMul     (use_mul             ),
-    .UseACC     (use_acc             ),
-    .SelRegData (sel_reg             ),
+    .UseA       (use_a               ),
+    .SelReg     (sel_reg             ),
     .Handshake  (SW[8]               )
 );
 
@@ -83,14 +83,14 @@ mul3mux mul3mux0(
 );
 
 alu alu0(
-    .Clock  (Clock    ),
-    .nReset (nReset   ),
-    .WE     (acc_we   ),
-    .ACC    (acc      ),
-    .DataA  (acc      ),
-    .DataB  (data     ),
-    .UseMul (use_mul  ),
-    .UseA   (use_a    ),
+    .Clock (Clock  ),
+    .nReset(nReset ),
+    .WE    (acc_we ),
+    .ACC   (acc    ),
+    .DataA (acc    ),
+    .DataB (data   ),
+    .UseMul(use_mul),
+    .UseA  (use_a  )
 );
 
 endmodule
