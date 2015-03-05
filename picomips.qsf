@@ -37,12 +37,12 @@
 # -------------------------------------------------------------------------- #
 
 
-set_global_assignment -name FAMILY "Cyclone IV E"
-set_global_assignment -name DEVICE EP4CE115F23C7
+set_global_assignment -name FAMILY "Cyclone III"
+set_global_assignment -name DEVICE EP3C16F484C6
 set_global_assignment -name TOP_LEVEL_ENTITY picomips
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 14.1.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "23:24:33  FEBRUARY 19, 2015"
-set_global_assignment -name LAST_QUARTUS_VERSION 13.0
+set_global_assignment -name LAST_QUARTUS_VERSION 13.1
 set_global_assignment -name SOURCE_FILE picoMips.sv
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
@@ -56,4 +56,33 @@ set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name SYNTH_TIMING_DRIVEN_SYNTHESIS OFF
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
+
+set_location_assignment PIN_G21 -to fastclk
+set_location_assignment PIN_F1 -to push_button[2]
+set_location_assignment PIN_G3 -to push_button[1]
+set_location_assignment PIN_H2 -to push_button[0]
+set_location_assignment PIN_D2 -to SW[9]
+set_location_assignment PIN_E4 -to SW[8]
+set_location_assignment PIN_E3 -to SW[7]
+set_location_assignment PIN_H7 -to SW[6]
+set_location_assignment PIN_J7 -to SW[5]
+set_location_assignment PIN_G5 -to SW[4]
+set_location_assignment PIN_G4 -to SW[3]
+set_location_assignment PIN_H6 -to SW[2]
+set_location_assignment PIN_H5 -to SW[1]
+set_location_assignment PIN_J6 -to SW[0]
+set_location_assignment PIN_B1 -to LED[9]
+set_location_assignment PIN_B2 -to LED[8]
+set_location_assignment PIN_C2 -to LED[7]
+set_location_assignment PIN_C1 -to LED[6]
+set_location_assignment PIN_E1 -to LED[5]
+set_location_assignment PIN_F2 -to LED[4]
+set_location_assignment PIN_H1 -to LED[3]
+set_location_assignment PIN_J3 -to LED[2]
+set_location_assignment PIN_J2 -to LED[1]
+set_location_assignment PIN_J1 -to LED[0]
+
+set_global_assignment -name CYCLONEII_OPTIMIZATION_TECHNIQUE AREA
+set_global_assignment -name DSP_BLOCK_BALANCING "DSP BLOCKS"
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

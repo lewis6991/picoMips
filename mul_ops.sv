@@ -16,10 +16,13 @@ module mult #(
     input                 nReset,
     output signed [n-1:0] Out
 );
-`ifdef SIM // Behavourial model
     logic [n-1:0] pOut, mOut;
 
-    assign mOut = (A == 0 || B == 0) ? 0 : A * B;
+    `ifdef SIM
+        assign mOut = (A == 0 || B == 0) ? 0 : A * B;
+    `else
+        assign mOut = A * B;
+    `endif
 
     always_ff @ (posedge Clock, negedge nReset)
         if (~nReset)
@@ -29,25 +32,6 @@ module mult #(
 
     assign Out = p ? pOut : mOut;
 
-`else // FPGA implementation
-lpm_mult lpm_mult_component (
-    .clken  (1'b0              ),
-    .clock  (p ?   Clock : 1'd0),
-    .dataa  (A                 ),
-    .datab  (B                 ),
-    .result (Out               ),
-    .aclr   (p ? ~nReset : 1'd0),
-    .sum    (1'b0              )
-);
-defparam
-lpm_mult_component.lpm_hint           = "DEDICATED_MULTIPLIER_CIRCUITRY = YES",
-lpm_mult_component.lpm_pipeline       = p                                     ,
-lpm_mult_component.lpm_representation = "SIGNED"                              ,
-lpm_mult_component.lpm_type           = "LPM_MULT"                            ,
-lpm_mult_component.lpm_widtha         = n                                     ,
-lpm_mult_component.lpm_widthb         = n                                     ,
-lpm_mult_component.lpm_widthp         = n                                     ;
-`endif
 endmodule
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
