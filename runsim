@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" = "gui" ]; then
-    guivar="+ncaccess+r +gui +tcl+restore.tcl &"
+    guivar="+ncaccess+rcw +gui +tcl+restore.tcl"
 fi
 
-ncverilog -sv -q picomips_tb.sv picomips.sv +define+SIM $guivar
+ncverilog -sv -q picomips_tb.sv picomips.sv ${guivar}

@@ -18,11 +18,7 @@ module mult #(
 );
     logic [n-1:0] pOut, mOut;
 
-    `ifdef SIM
-        assign mOut = (A == 0 || B == 0) ? 0 : A * B;
-    `else
-        assign mOut = A * B;
-    `endif
+    assign mOut = A * B;
 
     always_ff @ (posedge Clock, negedge nReset)
         if (~nReset)
