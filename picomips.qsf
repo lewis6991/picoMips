@@ -39,6 +39,7 @@
 
 set_global_assignment -name FAMILY "Cyclone III"
 set_global_assignment -name DEVICE EP3C16F484C6
+set_global_assignment -name FAMILY "Cyclone III"
 set_global_assignment -name TOP_LEVEL_ENTITY picomips
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 14.1.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "23:24:33  FEBRUARY 19, 2015"

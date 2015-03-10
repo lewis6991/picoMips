@@ -29,9 +29,9 @@ task run_affine_trans(bit signed [7:0] x1, y1);
     #(20*clk_p) SW[7:0] = y1 ;
     #(20*clk_p) SW[ 8 ] = 1  ;
     #(20*clk_p) SW[ 8 ] = 0  ;
-    #(30*clk_p) x2_act  = LED;
+    #(40*clk_p) x2_act  = LED;
                 SW[ 8 ] = 1  ;
-    #(20*clk_p) y2_act  = LED;
+    #(40*clk_p) y2_act  = LED;
                 SW[ 8 ] = 0  ;
 
     assert(x2 inside {x2_act, x2_act + 1} || x2 == -128 && x2_act == 127)

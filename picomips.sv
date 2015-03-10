@@ -15,22 +15,22 @@ module picomips(
     output signed [7:0] LED
 );
 
-wire                nReset         ;
-wire         [11:0] instruction    ;
-wire  signed [ 7:0] acc            ;
-wire         [ 6:0] program_counter;
-wire                pc_hold        ;
-wire                acc_we         ;
-wire                reg_write      ;
-wire  signed [ 7:0] immediate      ;
-wire  signed [ 7:0] data           ;
-wire                reg_addr       ;
-wire  signed [ 7:0] reg_data       ;
-wire                use_mul        ;
-wire                use_a          ;
-wire                sel_imm        ;
-wire                sel_sw         ;
-wire                sel_reg        ;
+wire               nReset         ;
+wire         [9:0] instruction    ;
+wire  signed [7:0] acc            ;
+wire         [6:0] program_counter;
+wire               pc_hold        ;
+wire               acc_we         ;
+wire               reg_write      ;
+wire  signed [7:0] immediate      ;
+wire  signed [7:0] data           ;
+wire               reg_addr       ;
+wire  signed [7:0] reg_data       ;
+wire               use_mul        ;
+wire               use_a          ;
+wire               sel_imm        ;
+wire               sel_sw         ;
+wire               sel_reg        ;
 
 assign nReset = SW[9];
 assign LED    = acc  ;
