@@ -14,8 +14,8 @@ parameter REG_1 = 4'd0;
 parameter REG_2 = 4'd1;
 
 // Immediates
-parameter IMM_05  = 4'd4; // 0.5
-parameter IMM_075 = 4'd6; // 0.75
+parameter IMM_05  = 4'd2; // 0.5
+parameter IMM_075 = 4'd3; // 0.75
 parameter IMM_20  = 6'd20; // 20
 parameter IMM_7   = 4'd7; // 7
 parameter IMM_6   = 4'd6; // 6

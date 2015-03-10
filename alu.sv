@@ -38,10 +38,10 @@ mult mult0(
     .nReset(1'd0          )
 );
 
-assign mulb = {subdatab[7:4], ~UseMul | subdatab[3], subdatab[2:0]};
+assign mulb = {subdatab[7:3], ~UseMul | subdatab[2], subdatab[1:0]};
 
 // Dummy signal used to allign multiplier output. Gets optimised away by synthesiser.
-logic signed [2:0] tmp;
+logic signed [1:0] tmp;
 
 always_ff @ (posedge Clock, negedge nReset)
    if (~nReset)
